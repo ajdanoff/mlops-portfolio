@@ -122,5 +122,69 @@ import MainLayout from '../layouts/MainLayout.astro';
 
 		</div>
 	</section>
+    	<!-- Professional Consulting & Engineering Services Matrix -->
+	<section id="services" class="pt-24 pb-12 space-y-8">
+		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
+			<h2 class="text-lg font-bold tracking-tight text-white">/ Engineering & Consulting Services</h2>
+			<span class="text-[10px] text-brand-accent uppercase tracking-widest font-bold">Available for Contracts</span>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			
+			<!-- Service 1: MLOps Decoupling -->
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-brand-accent text-xs font-bold tracking-wider">// 01 // ARCHITECTURE</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">MLOps Infrastructure & Decoupling</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Isolating heavy synchronous deep learning model inference (PyTorch, vLLM, TensorRT) away from Python ASGI frameworks (FastAPI) via highly scalable message brokers (RabbitMQ, Redis Streams) to prevent Event Loop blocks and system degradation.
+				</p>
+				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
+					<li>• Asynchronous Task Architecture</li>
+					<li>• Distributed Celery Worker Clusters</li>
+					<li>• Dynamic Input Validation Gates</li>
+				</ul>
+			</div>
+
+			<!-- Service 2: Automated Quality Gates -->
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-emerald-400 text-xs font-bold tracking-wider">// 02 // QUALITY ENG</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">Automated Verification & Gates</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Building custom automated validation frameworks embedded directly inside CI/CD pipelines (GitHub Actions, GitLab CI). Enforcing robust test suites tracking feature schema validation, data drift anomalies (KS-Test), and model footprint evaluations.
+				</p>
+				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
+					<li>• Cross-Model Contract Testing</li>
+					<li>• Automated Dataset Augmentations</li>
+					<li>• Out-of-Distribution Regression Gates</li>
+				</ul>
+			</div>
+
+			<!-- Service 3: High-Density Monitoring -->
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-amber-400 text-xs font-bold tracking-wider">// 03 // RELIABILITY</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">High-Load Observability & Triage</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Instrumenting full-stack monitoring layers (Prometheus, Grafana, Jaeger) designed to track latency percentiles (p95/p99) and infrastructure failures. Replicating stress profiles to eliminate Kubernetes CPU Throttling and cascading network timeouts.
+				</p>
+				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
+					<li>• Kernel CFS Throttling Diagnostics</li>
+					<li>• High-Density Prometheus Metric Exporters</li>
+					<li>• Load Testing Automation (k6/Locust)</li>
+				</ul>
+			</div>
+
+		</div>
+
+		<!-- Unified Value Proposition Banner -->
+		<div class="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-dark border border-slate-800 rounded-lg p-6 flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+			<div class="space-y-1">
+				<h4 class="text-xs font-bold text-white">Need an infrastructure engineer to stabilize your production ML lifecycle?</h4>
+				<p class="text-[11px] text-slate-400">Available for targeted infrastructure audits, contract platform engineering, and custom automation framework designs.</p>
+			</div>
+			<a href="mailto:alexander.jdanoff@gmail.com" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-brand-accent border border-slate-700 px-4 py-2 rounded shadow-sm whitespace-nowrap transition-colors">
+				Request Technical Audit
+			</a>
+		</div>
+	</section>
 
 </MainLayout>
