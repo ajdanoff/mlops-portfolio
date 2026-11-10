@@ -103,14 +103,15 @@ import MainLayout from '../layouts/MainLayout.astro';
 			<!-- Project 4: Gesture Swarm ROS 2 -->
 			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
 				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-							ajdanoff / gesture-swarm-ros2
-						</h3>
-						<span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded">
-							Robotics
-						</span>
-					</div>
+					<!-- Inside src/pages/index.astro under the fourth project card (Gesture Swarm) -->
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+                            <a href={`${import.meta.env.BASE_URL}/cases/gesture-swarm-ros2`}>ajdanoff / gesture-swarm-ros2</a>
+                        </h3>
+                        <span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded">
+                            Robotics
+                        </span>
+                    </div>
 					<p class="text-xs text-slate-400 leading-relaxed">
 						Asynchronous vision-to-action robotic swarm coordination package. Implements hardware-agnostic real-time node pipelines managing YOLO inference and temporal consensus tracking via custom **RANSAC filters**.
 					</p>
