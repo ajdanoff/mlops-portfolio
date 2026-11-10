@@ -1,0 +1,124 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout title="MLOps, Infrastructure & Automated Validation Engineer">
+	
+	<!-- Systems Architect Hero Sector -->
+	<section class="space-y-6 max-w-3xl pb-16 border-b border-slate-800/60">
+		<div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-xs text-slate-400">
+			<span class="text-emerald-400">✓</span> M.Sc. Computer Vision & Robotics @ TU Munich
+		</div>
+		<h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+			Building robust pipelines, microservices, and <span class="text-brand-accent">Quality Gates</span> for heavy production ML workloads.
+		</h1>
+		<p class="text-sm text-slate-400 font-normal leading-relaxed max-w-2xl">
+			Systems Engineer with <span class="text-slate-200 font-bold">11 years of software infrastructure expertise</span> (Kaspersky, Datagile). Specializing in decoupling heavy machine learning architectures, fault-injection validation, zero-copy video processing engines, and high-load resource monitoring.
+		</p>
+		<div class="flex flex-wrap gap-3 pt-2">
+			<a href="https://github.com" target="_blank" class="bg-brand-accent hover:bg-sky-400 text-brand-dark px-4 py-2 rounded text-xs font-bold transition-all shadow-sm">
+				View Source Ecosystem (GitHub)
+			</a>
+			<a href="mailto:alexander.jdanoff@gmail.com" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 px-4 py-2 rounded text-xs font-semibold transition-all">
+				Initialize Contact
+			</a>
+		</div>
+	</section>
+
+	<!-- High Priority Projects Hub -->
+	<section id="projects" class="pt-16 space-y-8">
+		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
+			<h2 class="text-lg font-bold tracking-tight text-white">/ Core Engineering Repositories</h2>
+			<span class="text-[10px] text-slate-500 uppercase tracking-widest">4 Production-Grade Stacks</span>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			
+			<!-- Project 1: ASL Recognition Pipeline -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							ajdanoff / asl-gesture-recognition
+						</h3>
+						<span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
+							CI Green
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Asynchronous dataset conversion and model benchmarking framework. Features automated **GitHub Actions CI validation gates** evaluating YOLO11n models across multi-variant augmented image matrix spaces.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>Python // PyTorch // CI/CD</span>
+					<a href="https://github.com/asl-gesture-recognition" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 2: ML Workload Execution Platform -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							ajdanoff / ml-workload-execution-platform
+						</h3>
+						<span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
+							Architecture
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Asynchronous processing platform offloading long-running inference (YOLOv8, Qwen2.5-VL) to isolated workers. Integrates Data/Model/Serving Contract Testing and 4-layer validation strategy.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>FastAPI // RabbitMQ // AWQ Quantization</span>
+					<a href="https://github.com/ml-workload-execution-platform" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 3: Incident Lab -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							ajdanoff / incident-lab
+						</h3>
+						<span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
+							Observability
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Kubernetes replication laboratory tracking microservice performance failure patterns under extreme loads. Formalizes real-time metrics tracking for **Kubernetes CPU Throttling**, cascade timeouts, and reconnect storms.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>K8s // Prometheus // Grafana</span>
+					<a href="https://github.com/incident-lab" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 4: Gesture Swarm ROS 2 -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							ajdanoff / gesture-swarm-ros2
+						</h3>
+						<span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded">
+							Robotics
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Asynchronous vision-to-action robotic swarm coordination package. Implements hardware-agnostic real-time node pipelines managing YOLO inference and temporal consensus tracking via custom **RANSAC filters**.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>C++ // ROS 2 // RANSAC</span>
+					<a href="https://github.com/gesture-swarm-ros2" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+				</div>
+			</div>
+
+		</div>
+	</section>
+
+</MainLayout>
