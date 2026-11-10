@@ -5,64 +5,96 @@ title: "CI/CD Model Benchmarking Pipeline: ASL Gesture Recognition"
 
 # CI/CD Model Benchmarking Pipeline: ASL Gesture Recognition
 
-### 🛠️ Infrastructure Overview
-A production-oriented automation workflow built to enforce **Quality Gates** on computer vision model deployments. The core system validates deep learning model inferences across structured multi-variant augmented datasets, ensuring no performance regressions reach rollout.
+### 🛠️ Infrastructure & Model Evolution Overview
+A production-oriented automation workflow built to enforce strict **Quality Gates** on computer vision model deployments within a ROS 2 robotic swarm context. The core ecosystem handles automated dataset conversion, multi-pass bounding-box generation fallbacks, and real-time model benchmarking across held-out webcam data streams to isolate and measure domain gaps before deployment.
 
 - **Source Code Repository:** [://github.com](https://://github.com)
 - **Active Pipeline Run:** [GitHub Actions Run #42774090717](https://://github.com/actions/runs/42774090717)
-- **Pipeline Execution Metric:** `Succeeded in 2m 6s`
+- **Core Pipeline Execution Metric:** `Succeeded in 2m 6s`
 
 ---
 
-## 🏗️ Architecture & Core Components
+## 🏗️ Architecture & Specialist Model Evolution
 
-The pipeline manages an asynchronous lifecycle designed to split runtime dependencies and achieve highly reproducible model evaluations:
+To reduce visual confusion between motion-critical execution characters and similar digits, the architecture was intentionally transitioned from a single unified network into specialized, discrete detectors.
 
 ```text
-[Commit/Push Trigger] 
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ GitHub Actions Runner (Ubuntu Latest)                  │
-│ ├── 1. Setup Isolated Python 3.10 Context              │
-│ ├── 2. Pull Target Dataset Matrix                      │
-│ └── 3. Cache & Initialize Ultralytics Hub Dependencies  │
-└───────────────────────┬────────────────────────────────┘
-                        │
-                        ▼
-┌────────────────────────────────────────────────────────┐
-│ Automated Quality Validation Gate                      │
-│ ├── Run symbol-based inference matching (36 classes)   │
-│ ├── Evaluate Original vs. 5x Augmented Variants        │
-│ └── Export precise confusion matrix data logs          │
-└───────────────────────┬────────────────────────────────┘
-                        │
-                        ▼
-[Green Build Flag Issued] ──► [Release Branch Merged]
+                                [ Входящий Снимок / Видеокадр ]
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       ▼                                               ▼
+         [ Specialist Digit Detector ]                   [ Specialist Letter Detector ]
+         ├── 10 Classes (0-9)                            ├── 26 Classes (A-Z)
+         ├── Input: 512×512, AdamW                       ├── Input: 512×512, AdamW
+         └── mAP@0.50: 0.990                             └── mAP@0.50: 0.986
 ```
 
-### 1. The Multi-Variant Evaluation Matrix
-Instead of evaluating models against loose, unversioned validation data, this framework checks inference accuracy across two held-out webcam benchmark subsets sharing a unified **36-class YOLO label space** (0–9 digits, 10–35 letters A–Z):
-* **ASL Webcam Benchmark — Original:** Baselines pure, uncontrolled real-world captures.
-* **ASL Webcam Benchmark — Augmented:** Injects 5 controlled computer-vision structural mutations per class to stress-test bounding box localization stability.
+### 1. The Validation Matrix & Improvements
+Separating the tasks into independent specialist detectors yielded distinct performance improvements over the baseline unified 36-class architecture:
 
-### 2. Custom Symbol-Based Evaluation Parser
-Standard YOLO index matching fails when comparing unified models against single-domain (digit-only or letter-only) variations due to internal class-index shifting. To bypass this, I implemented an abstract **symbol-based matching validation layer** that maps model indexes directly back to their true ASCII character representation, delivering objective, cross-model precision metrics.
+| Model Architecture | Evaluated Class Split | Precision | Recall | mAP@0.50 | mAP@0.50:0.95 |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Unified YOLO11n MP** | Full Set (36 classes) | 0.942 | 0.940 | 0.961 | 0.911 |
+| **Specialist Digits (YOLO11n)** | Digits Only (0-9) | **0.989** | **0.982** | **0.990** | **0.933** |
+| **Specialist Letters (YOLO11n)** | Letters Only (A-Z) | **0.976** | **0.964** | **0.986** | 0.903 |
+
+### 2. Multi-Pass Dataset Conversion Pipeline
+To construct reliable datasets out of heterogeneous Kaggle and custom webcam sources, a robust two-pass pipeline was designed:
+* **Primary Pass:** Extracts hand coordinates using `MediaPipe HandLandmarker` to construct high-accuracy bounding boxes.
+* **Secondary Pass (YOLO Fallback):** Integrates a class-matched YOLO model wrapper to provide bounding boxes when MediaPipe markers fail.
+* **Tertiary Pass (Normalized Centered Fallback):** Calculates image-size-aware bounding box center statistics and injects a custom normalized expansion margin to avoid overly restricted regions of interest.
 
 ---
 
-## 🚀 CI/CD Pipeline Implementation Details
+## 🚀 Cross-Model MLOps Evaluation Framework
 
-The underlying automation wrapper is running live via GitHub Actions, executing the entire runtime validation flow within an isolated virtual container runner:
+Standard YOLO metric tools break down when evaluating specialized models because narrowing the class boundaries (e.g., dropping letters to keep only digits 0–9) alters the underlying class-index mappings. 
+
+To bridge this gap and establish reproducible integration testing, I built a custom **symbol-based matching evaluation engine** inside the pytest verification suite.
+
+```text
+[Ground Truth Class Index] ──► Map to Character Symbol (e.g., 'A')
+                                      │
+                                      ▼
+                        [ Run Inference Evaluation ]
+                                      │
+                                      ▼
+[Model Predicted Index]    ──► Map back via Model's Internal Names Map
+                                      │
+                                      ▼
+                      Verify: Symbols Match && IoU >= 0.45
+```
+
+### Held-Out Webcam Benchmarking & Domain Gap Analysis
+Every automated build evaluates model weights against two severe, completely out-of-distribution external datasets published as release assets:
+1. **ASL Webcam Benchmark — Original (36 Images):** Serves as a baseline smoke test using one raw real-world frame per class.
+2. **ASL Webcam Benchmark — Augmented (216 Images):** Applies 5 aggressive deterministic computer vision mutations per class (including rotations, translations, horizontal flips, gamma shifts, and Gaussian noise) to map systemic model failure points.
+
+```text
+               [ Shared Webcam Benchmark Recall Metrics ]
+┌───────────────────────────────┬───────────────────────────────┐
+│ Original Benchmark            │ Augmented Benchmark           │
+├───────────────────────────────┼───────────────────────────────┤
+│ Unified Model:  44.44%        │ Unified Model:  24.07%        │
+│ Digit Model:    60.00%        │ Digit Model:    46.67%        │
+│ Letter Model:   38.46%        │ Letter Model:   30.13%        │
+└───────────────────────────────┴───────────────────────────────┘
+```
+**Diagnostic Finding:** The performance discrepancy reveals a clear domain gap between laboratory training datasets and raw webcam streams. Classes such as `C`, `G`, `M`, and `U` drop performance significantly under specific spatial flips and lighting distortions, pointing to exact data augmentation targets required before deploying firmware onto the live robotic platforms.
+
+---
+
+## ⚙️ Automated CI/CD Quality Gate Configuration
+
+The automated pipeline executes via GitHub Actions on every pull request, handling model validation scripts, runtime dependency isolation, and regression verification checks inside a strict execution window.
 
 ```yaml
-# Engineering excerpt from the active deployment manifest
 name: Run ASL webcam benchmark
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   benchmark:
@@ -71,21 +103,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python Context
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           cache: 'pip'
 
-      - name: Execute Validation Suite
+      - name: Install Runtime Stack
         run: |
           pip install -r requirements.txt
+
+      - name: Run Cross-Model Symbol Benchmark Tests
+        run: |
           python -m pytest tests/ -v --color=yes
 ```
 
 ---
 
-## 📊 Performance & Production Impact
+## 📈 Key Production Takeaways
 
-* **Fail-Safe Integrity:** Any modification to model weight thresholds or layers that scales down `mAP@0.5:0.95` boundaries automatically triggers a pipeline failure, blocking the code integration before it ever breaks an downstream service.
-* **Execution Boundary:** Optimized dependency caching drops cold runner setup overhead, executing complete dataset pulls, multi-epoch model loading, and testing footprints inside a strict `2m 6s` processing budget.
+* **Specialization Validated:** Isolating digits into a dedicated network achieved an absolute increase of **+4.7% in Precision** and **+4.2% in Recall** on the validation set, validating the platform's multi-model architectural design.
+* **Fail-Fast Enforcement:** If an engineer alters a hyperparameter or pushes weights that result in missing critical motion commands (such as the directional instructions `A`, `B`, `F`, `L`, `R`), the symbol-based validation suite halts the build and prevents deployment.
+* **Resource Optimization:** The entire sequence—including dependency layer compilation, weight parsing, and evaluating 216 augmented images via pytest—completes within an optimized processing window of **2 minutes 6 seconds**.
