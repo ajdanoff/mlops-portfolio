@@ -37,21 +37,22 @@ import MainLayout from '../layouts/MainLayout.astro';
 			<!-- Project 1: ASL Recognition Pipeline -->
 			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
 				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-							ajdanoff / asl-gesture-recognition
-						</h3>
-						<span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
-							CI Green
-						</span>
-					</div>
+					<!-- Inside src/pages/index.astro under the first project card -->
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+                            <a href={`${import.meta.env.BASE_URL}/cases/asl-recognition`}>ajdanoff / asl-gesture-recognition</a>
+                        </h3>
+                        <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
+                            CI Green
+                        </span>
+                    </div>
 					<p class="text-xs text-slate-400 leading-relaxed">
 						Asynchronous dataset conversion and model benchmarking framework. Features automated **GitHub Actions CI validation gates** evaluating YOLO11n models across multi-variant augmented image matrix spaces.
 					</p>
 				</div>
 				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
 					<span>Python // PyTorch // CI/CD</span>
-					<a href="https://github.com/asl-gesture-recognition" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+					<a href="https://github.com/ajdanoff/asl-gesture-recognition" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
 				</div>
 			</div>
 
@@ -72,7 +73,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 				</div>
 				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
 					<span>FastAPI // RabbitMQ // AWQ Quantization</span>
-					<a href="https://github.com/ml-workload-execution-platform" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+					<a href="https://github.com/ajdanoff/ml-workload-execution-platform" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
 				</div>
 			</div>
 
@@ -93,7 +94,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 				</div>
 				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
 					<span>K8s // Prometheus // Grafana</span>
-					<a href="https://github.com/incident-lab" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+					<a href="https://github.com/ajdanoff/incident-lab" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
 				</div>
 			</div>
 
@@ -114,7 +115,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 				</div>
 				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
 					<span>C++ // ROS 2 // RANSAC</span>
-					<a href="https://github.com/gesture-swarm-ros2" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
+					<a href="https://github.com/ajdanoff/gesture-swarm-ros2" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
 				</div>
 			</div>
 
