@@ -80,14 +80,15 @@ import MainLayout from '../layouts/MainLayout.astro';
 			<!-- Project 3: Incident Lab -->
 			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
 				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-							ajdanoff / incident-lab
-						</h3>
-						<span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
-							Observability
-						</span>
-					</div>
+					<!-- Inside src/pages/index.astro under the third project card (Incident Lab) -->
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+                            <a href={`${import.meta.env.BASE_URL}/cases/incident-lab`}>ajdanoff / incident-lab</a>
+                        </h3>
+                        <span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
+                            Observability
+                        </span>
+                    </div>
 					<p class="text-xs text-slate-400 leading-relaxed">
 						Kubernetes replication laboratory tracking microservice performance failure patterns under extreme loads. Formalizes real-time metrics tracking for **Kubernetes CPU Throttling**, cascade timeouts, and reconnect storms.
 					</p>
