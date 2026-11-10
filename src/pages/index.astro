@@ -59,14 +59,15 @@ import MainLayout from '../layouts/MainLayout.astro';
 			<!-- Project 2: ML Workload Execution Platform -->
 			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
 				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-							ajdanoff / ml-workload-execution-platform
-						</h3>
-						<span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
-							Architecture
-						</span>
-					</div>
+					<!-- Inside src/pages/index.astro under the second project card (Execution Platform) -->
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+                            <a href={`${import.meta.env.BASE_URL}/cases/execution-platform`}>ajdanoff / ml-workload-execution-platform</a>
+                        </h3>
+                        <span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
+                            Architecture
+                        </span>
+                    </div>
 					<p class="text-xs text-slate-400 leading-relaxed">
 						Asynchronous processing platform offloading long-running inference (YOLOv8, Qwen2.5-VL) to isolated workers. Integrates Data/Model/Serving Contract Testing and 4-layer validation strategy.
 					</p>
