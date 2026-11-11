@@ -9,8 +9,6 @@ tags: ["humor", "recruiting", "engineering-culture", "mlops"]
 
 Even with decades of domain mastery, mathematical rigor, and production-proven deduction pipelines, sometimes an automated ATS filter—or a rigid requirement checklist—has other plans.
 
-<div class="my-8 bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-lg">
-  <img src="/mlops-portfolio/images/holmes-nodejs.svg" alt="Sherlock Holmes and Inspector Lestrade discussing AI, Machine Learning, and Node.js job requirements" class="w-full h-auto rounded-lg" />
-</div>
+![Sherlock Holmes and Inspector Lestrade discussing AI, Machine Learning, and Node.js job requirements](/mlops-portfolio/images/holmes-nodejs.png)
 
 > *Moral of the story:* Strong architectural fundamentals, distributed system debugging, and reproducible ML pipelines outlast any transient framework checklist—though knowing a bit of JavaScript to build an Astro portfolio never hurts.
