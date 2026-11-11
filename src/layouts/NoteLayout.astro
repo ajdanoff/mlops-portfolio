@@ -45,10 +45,15 @@ const { frontmatter } = Astro.props;
 			[&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ul]:text-slate-400
 			[&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>ol]:text-slate-400
 			[&>pre]:bg-slate-950 [&>pre]:border [&>pre]:border-slate-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:text-xs
-			[&>p>code]:bg-slate-900 [&>p>code]:text-brand-accent [&>p>code]:px-1.5 [&>p>code]:py-0.5 [&>p>code]:rounded [&>p>code]:text-xs
-			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400">
+			[&_code]:bg-slate-900 [&_code]:text-brand-accent [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs
+			[&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-sky-300
+			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400
+			[&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto
+			[&_th]:border [&_th]:border-slate-800 [&_th]:bg-slate-900/80 [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-slate-200 [&_th]:font-bold [&_th]:whitespace-nowrap
+			[&_td]:border [&_td]:border-slate-800/80 [&_td]:px-3 [&_td]:py-2 [&_td]:whitespace-nowrap">
 			<slot />
 		</div>
+
 
 	</article>
 </MainLayout>
