@@ -1,0 +1,54 @@
+---
+import MainLayout from './MainLayout.astro';
+
+const { frontmatter } = Astro.props;
+---
+
+<MainLayout title={frontmatter.title}>
+	<article class="max-w-3xl mx-auto space-y-8">
+		
+		<!-- Top Breadcrumb -->
+		<div>
+			<a href={`${import.meta.env.BASE_URL}/notes`} class="text-xs text-brand-accent hover:underline">
+				← cd ../notes
+			</a>
+		</div>
+
+		<!-- Article Header -->
+		<header class="space-y-4 border-b border-slate-800 pb-8">
+			<div class="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+				<time datetime={frontmatter.pubDate}>{frontmatter.pubDate}</time>
+				<span>//</span>
+				<span class="text-emerald-400">{frontmatter.readTime || '5 min read'}</span>
+			</div>
+			<h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+				{frontmatter.title}
+			</h1>
+			<p class="text-sm text-slate-400 leading-relaxed">
+				{frontmatter.description}
+			</p>
+			{frontmatter.tags && (
+				<div class="flex flex-wrap gap-2 pt-2">
+					{frontmatter.tags.map((tag: string) => (
+						<span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+							#{tag}
+						</span>
+					))}
+				</div>
+			)}
+		</header>
+
+		<!-- Markdown Content Body -->
+		<div class="space-y-6 text-sm text-slate-300 leading-relaxed 
+			[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-white [&>h2]:pt-6 [&>h2]:border-b [&>h2]:border-slate-900 [&>h2]:pb-2
+			[&>h3]:text-base [&>h3]:font-bold [&>h3]:text-brand-accent [&>h3]:pt-4
+			[&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ul]:text-slate-400
+			[&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>ol]:text-slate-400
+			[&>pre]:bg-slate-950 [&>pre]:border [&>pre]:border-slate-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:text-xs
+			[&>p>code]:bg-slate-900 [&>p>code]:text-brand-accent [&>p>code]:px-1.5 [&>p>code]:py-0.5 [&>p>code]:rounded [&>p>code]:text-xs
+			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400">
+			<slot />
+		</div>
+
+	</article>
+</MainLayout>

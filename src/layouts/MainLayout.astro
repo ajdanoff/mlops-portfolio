@@ -28,8 +28,9 @@ const { title } = Astro.props;
                     </a>
 				</div>
 				<nav class="flex items-center space-x-6 text-xs font-semibold tracking-wide text-slate-400">
-					<a href="#projects" class="hover:text-slate-100 transition-colors">/projects</a>
-					<a href="#infrastructure" class="hover:text-slate-100 transition-colors">/services</a>
+				    <a href={`${import.meta.env.BASE_URL}/#projects`} class="hover:text-slate-100 transition-colors">/projects</a>
+					<a href={`${import.meta.env.BASE_URL}/notes`} class="hover:text-brand-accent transition-colors">/notes</a>
+					<a href={`${import.meta.env.BASE_URL}/#services`} class="hover:text-slate-100 transition-colors">/services</a>
 					<a href="https://github.com" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a>
 				</nav>
 			</div>

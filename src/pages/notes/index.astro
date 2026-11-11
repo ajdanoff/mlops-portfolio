@@ -1,0 +1,60 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+
+// Automatically fetch all Markdown posts in this directory
+const allNotes = await Astro.glob('./*.md');
+
+// Sort posts by pubDate descending (newest first)
+const sortedNotes = allNotes.sort((a, b) => 
+	new Date(b.frontmatter.pubDate).valueOf() - new Date(a.frontmatter.pubDate).valueOf()
+);
+---
+
+<MainLayout title="Engineering Log & Architecture Notes">
+	<section class="max-w-3xl mx-auto space-y-10">
+		
+		<!-- Section Header -->
+		<div class="space-y-3 border-b border-slate-800 pb-6">
+			<div class="text-xs text-brand-accent font-bold tracking-wider">// ENGINEERING_LOG</div>
+			<h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+				Architecture Notes & Triage Logs
+			</h1>
+			<p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+				Field notes on MLOps infrastructure, GPU memory optimization, distributed quality gates, and production failure diagnostics.
+			</p>
+		</div>
+
+		<!-- Notes List -->
+		<div class="space-y-6">
+			{sortedNotes.map((note) => (
+				<article class="bg-slate-900/30 border border-slate-800/80 hover:border-brand-accent/50 rounded-lg p-6 transition-all group">
+					<a href={note.url} class="block space-y-3">
+						<div class="flex items-center justify-between text-[11px] text-slate-500">
+							<time datetime={note.frontmatter.pubDate}>{note.frontmatter.pubDate}</time>
+							<span class="text-emerald-400">{note.frontmatter.readTime || '5 min read'}</span>
+						</div>
+						
+						<h2 class="text-base sm:text-lg font-bold text-white group-hover:text-brand-accent transition-colors">
+							{note.frontmatter.title}
+						</h2>
+						
+						<p class="text-xs text-slate-400 leading-relaxed">
+							{note.frontmatter.description}
+						</p>
+
+						{note.frontmatter.tags && (
+							<div class="flex flex-wrap gap-2 pt-2">
+								{note.frontmatter.tags.map((tag: string) => (
+									<span class="text-[10px] text-slate-500 bg-slate-950 border border-slate-800/80 px-2 py-0.5 rounded">
+										#{tag}
+									</span>
+								))}
+							</div>
+						)}
+					</a>
+				</article>
+			))}
+		</div>
+
+	</section>
+</MainLayout>
