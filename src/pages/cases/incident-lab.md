@@ -8,7 +8,7 @@ title: "Kubernetes Fault-Injection & Observability Laboratory"
 ### 🛠️ Infrastructure Overview
 An advanced simulation environment designed to systematically replicate high-load infrastructure bottlenecks, resource starvation, and cascading failure patterns in containerized microservice architectures. This project functions as an automated staging environment where target services are subjected to artificial congestion patterns to test and refine Prometheus metrics alerts, Grafana dashboard configurations, and system stability under stress.
 
-- **Source Code Repository:** [://github.com](https://://github.com)
+- **Source Code Repository:** [incident-lab](https://github.com/ajdanoff/incident-lab)
 - **Primary Tech Stack:** Kubernetes (cgroups) // Prometheus v2 // Grafana // k6 Load Testing // Python ASGI
 
 ---

@@ -1,0 +1,166 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = '8086 VGA Karate // Arcade Easter Egg' } = Astro.props;
+---
+
+<section class="max-w-3xl mx-auto space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+    <div>
+      <div class="text-xs text-brand-accent font-bold tracking-wider">
+        // DOS_BOX // MODE_13H_320x200
+      </div>
+
+      <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+        {title}
+      </h1>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <button
+        id="mute-btn"
+        class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors"
+      >
+        PC Speaker: ON
+      </button>
+
+      <button
+        id="pause-btn"
+        class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors"
+      >
+        Pause [P]
+      </button>
+
+      <button
+        id="reset-btn"
+        class="text-xs bg-brand-accent hover:bg-sky-400 text-brand-dark font-bold px-3 py-1.5 rounded transition-colors"
+      >
+        New Match [R]
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-slate-900 p-3 sm:p-5 rounded-xl border-2 border-slate-800 shadow-2xl">
+    <div class="relative w-full aspect-[16/10] bg-black rounded overflow-hidden border border-slate-700">
+      <canvas
+        id="vga-canvas"
+        width="320"
+        height="200"
+        class="w-full h-full block"
+        style="image-rendering: pixelated; image-rendering: crisp-edges;"
+      ></canvas>
+
+      <div
+        class="pointer-events-none absolute inset-0 opacity-20"
+        style="background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.6) 0px,
+          rgba(0, 0, 0, 0.6) 1px,
+          transparent 1px,
+          transparent 3px
+        );"
+      ></div>
+    </div>
+
+    <div class="flex items-center justify-between pt-3 px-1 text-[10px] text-slate-500">
+      <span>IBM VGA 256-COLOR PALETTE // FSM COMBAT ENGINE</span>
+
+      <span class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        POWER
+      </span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-2 sm:hidden select-none">
+    <button data-key="ArrowLeft" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+      ◀ LEFT
+    </button>
+
+    <button data-key="ArrowRight" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+      RIGHT ▶
+    </button>
+
+    <button data-key="ShiftLeft" class="touch-btn bg-slate-900 border border-violet-500/40 active:bg-violet-500/20 py-3 rounded text-xs font-bold text-violet-300">
+      DASH
+    </button>
+
+    <button data-key="KeyW" class="touch-btn bg-slate-900 border border-amber-500/40 active:bg-amber-500/20 py-3 rounded text-xs font-bold text-amber-400">
+      BLOCK
+    </button>
+
+    <button data-key="KeyJ" class="touch-btn bg-slate-900 border border-brand-accent/40 active:bg-brand-accent/20 py-3 rounded text-xs font-bold text-brand-accent">
+      PUNCH
+    </button>
+
+    <button data-key="KeyK" class="touch-btn bg-slate-900 border border-emerald-500/40 active:bg-emerald-500/20 py-3 rounded text-xs font-bold text-emerald-400">
+      KICK
+    </button>
+
+    <button data-key="KeyL" class="touch-btn bg-slate-900 border border-rose-500/40 active:bg-rose-500/20 py-3 rounded text-xs font-bold text-rose-400">
+      LOW
+    </button>
+
+    <button data-key="KeyP" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+      PAUSE
+    </button>
+
+    <button data-key="KeyR" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+      RESET
+    </button>
+  </div>
+
+  <div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+    <div>
+      <span class="text-slate-500 block text-[10px]">MOVE</span>
+      <span class="text-white font-bold">[A / D] or [← / →]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">HIGH BLOCK</span>
+      <span class="text-amber-400 font-bold">[W] or [↑]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">JAB PUNCH</span>
+      <span class="text-brand-accent font-bold">[J] or [Z]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">HIGH KICK</span>
+      <span class="text-emerald-400 font-bold">[K] or [X]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">LOW KICK</span>
+      <span class="text-rose-400 font-bold">[L] or [C]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">DASH</span>
+      <span class="text-violet-300 font-bold">[SHIFT]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">PAUSE</span>
+      <span class="text-white font-bold">[P] or [ESC]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">RESET MATCH</span>
+      <span class="text-white font-bold">[R]</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initKarateGame } from '../../games/karate/game';
+
+  const canvas = document.getElementById('vga-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    initKarateGame(canvas);
+  }
+</script>

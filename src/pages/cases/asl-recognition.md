@@ -8,8 +8,8 @@ title: "CI/CD Model Benchmarking Pipeline: ASL Gesture Recognition"
 ### 🛠️ Infrastructure & Model Evolution Overview
 A production-oriented automation workflow built to enforce strict **Quality Gates** on computer vision model deployments within a ROS 2 robotic swarm context. The core ecosystem handles automated dataset conversion, multi-pass bounding-box generation fallbacks, and real-time model benchmarking across held-out webcam data streams to isolate and measure domain gaps before deployment.
 
-- **Source Code Repository:** [://github.com](https://://github.com)
-- **Active Pipeline Run:** [GitHub Actions Run #42774090717](https://://github.com/actions/runs/42774090717)
+- **Source Code Repository:** [asl-gesture-recognition](https://github.com/ajdanoff/asl-gesture-recognition)
+- **Active Pipeline Run:** [GitHub Actions Run #42774090717](https://github.com/ajdanoff/asl-gesture-recognition/actions/runs/42774090717)
 - **Core Pipeline Execution Metric:** `Succeeded in 2m 6s`
 
 ---

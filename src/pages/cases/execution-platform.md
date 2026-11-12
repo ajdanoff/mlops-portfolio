@@ -8,7 +8,7 @@ title: "Distributed ML Workload Execution Platform"
 ### 🛠️ Infrastructure Overview
 A production-ready asynchronous job-execution system designed to handle long-running, resource-intensive machine learning workloads (such as YOLOv8 training/evaluation and Qwen2.5-VL multi-modal inference) without blocking front-facing client interfaces. The core architecture implements strict task decoupling, distributed worker pooling, and progressive memory optimization strategies to deliver predictable latency under heavy inference profiles.
 
-- **Source Code Repository:** [://github.com](https://://github.com)
+- **Source Code Repository:** [ml-workload-execution-platform](https://github.com/ajdanoff/ml-workload-execution-platform)
 - **Primary Tech Stack:** FastAPI // RabbitMQ // Celery Clusters // vLLM Inference Engine // AWQ & 4-bit NF4 Quantization // Pydantic v2
 
 ---

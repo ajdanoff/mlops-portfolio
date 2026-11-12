@@ -8,7 +8,7 @@ title: "Gesture Swarm ROS 2: Vision-Based Robotic Swarm Control"
 ### 🛠️ Infrastructure Overview
 A modular **ROS 2 Python** package implementing a real-time perception-to-action pipeline for gesture-controlled mobile robot swarms. Using **YOLO11n** American Sign Language (ASL) detection and `turtlesim` as a kinematic verification environment, the architecture decouples raw computer vision inference from temporal command parsing and actuator velocity execution.
 
-- **Source Code Repository:** [github.com/ajdanoff/gesture-swarm-ros2](https://github.com/ajdanoff/gesture-swarm-ros2)
+- **Source Code Repository:** [gesture-swarm-ros2](https://github.com/ajdanoff/gesture-swarm-ros2)
 - **Benchmark Documentation:** [Benchmark Datasets Wiki](https://github.com/ajdanoff/gesture-swarm-ros2/wiki/Benchmark-datasets)
 - **Primary Tech Stack:** ROS 2 (Humble / Lyrical) // Python 3.10+ // Ultralytics YOLO11n // OpenCV // Temporal RANSAC // `turtlesim`
 
