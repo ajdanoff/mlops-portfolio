@@ -1,0 +1,109 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Обо мне и инженерный опыт">
+	<section class="max-w-3xl mx-auto space-y-12">
+
+		<!-- Header -->
+		<div class="space-y-4 border-b border-slate-800 pb-8">
+			<div class="text-xs text-brand-accent font-bold tracking-wider">// ПРОФИЛЬ_СИСТЕМЫ // ОБО МНЕ</div>
+			<h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+				Александр Жданов
+			</h1>
+			<p class="text-sm text-slate-400 leading-relaxed">
+				Системный инженер, специалист по MLOps-инфраструктуре, компьютерному зрению и робототехнике (Санкт-Петербург). Соединяю глубокий R&D-бэкграунд с построением надёжных, отказоустойчивых продакшен-систем и автоматических ворот качества.
+			</p>
+		</div>
+
+		<!-- Core Trajectory / Experience -->
+		<div class="space-y-6">
+			<h2 class="text-base font-bold text-white border-b border-slate-900 pb-2">/ Инженерная и исследовательская траектория</h2>
+			
+			<div class="space-y-6 border-l border-slate-800 pl-6 ml-2">
+				
+				<div class="space-y-1 relative">
+					<span class="w-2.5 h-2.5 rounded-full bg-brand-accent absolute -left-[29px] top-1.5"></span>
+					<div class="flex flex-wrap justify-between text-xs">
+						<span class="font-bold text-white">Фокус на MLOps, Computer Vision и ML-инфраструктуре</span>
+						<span class="text-slate-500">2025 — настоящее время</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed pt-1">
+						Проектирование асинхронных платформ исполнения ML-задач, пайплайнов квантования VLM (Qwen2.5-VL / vLLM / AWQ / 4-bit NF4), автоматизированных CI/CD Quality Gates на held-out бенчмарках и модульных контуров управления роботами на ROS 2. Завершил программу переподготовки «Инженер по глубокому обучению: компьютерное зрение» в Яндекс Практикуме (2026).
+					</p>
+				</div>
+
+				<div class="space-y-1 relative">
+					<span class="w-2.5 h-2.5 rounded-full bg-slate-700 absolute -left-[29px] top-1.5"></span>
+					<div class="flex flex-wrap justify-between text-xs">
+						<span class="font-bold text-white">Ведущий инженер автоматизации и ML-пайплайнов (Datagile / Лаборатория Касперского)</span>
+						<span class="text-slate-500">Индустриальный опыт</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed pt-1">
+						Построение сквозных ML-пайплайнов (FastAPI, Docker, Grafana) и разработка распределённых фреймворков интеграционного тестирования антифишинговых ML-сервисов под высокой нагрузкой (до 2,5 млн операций в сутки с использованием Python, RabbitMQ, PostgreSQL, Cassandra и Locust).
+					</p>
+				</div>
+
+				<div class="space-y-1 relative">
+					<span class="w-2.5 h-2.5 rounded-full bg-slate-700 absolute -left-[29px] top-1.5"></span>
+					<div class="flex flex-wrap justify-between text-xs">
+						<span class="font-bold text-white">Европейский R&D и C++ разработка (Мюнхен, Франция, Испания)</span>
+						<span class="text-slate-500">Научный и коммерческий R&D</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed pt-1">
+						Разработка C++ решений для сравнения и оценки качества 3D-реконструкций в системе интраоперационной навигации freehand SPECT в <strong>SurgicEye GmbH</strong> (Мюнхен). Оптимизация Real-Time Ray Tracing на <strong>CUDA / NVIDIA OptiX</strong> с использованием кодов Мортона в совместной магистерской диссертации с <strong>Audi</strong>. Исследовательские проекты в <strong>INRIA</strong> (Франция), <strong>Университете Леона</strong> (Испания, анализ сетевого трафика на PySpark), а также разработка ПО в <strong>CST AG</strong> и <strong>John Wiley & Sons</strong>.
+					</p>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- Academic Foundation & Publications -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<div class="bg-slate-900/30 border border-slate-800/80 rounded-lg p-5 space-y-3">
+				<div class="text-xs font-bold text-emerald-400">// ОБРАЗОВАНИЕ</div>
+				<ul class="space-y-3 text-xs text-slate-300">
+					<li>
+						<div class="font-bold text-white">Technical University of Munich (TUM)</div>
+						<div class="text-slate-400">M.Sc. Computer Vision & Robotics (лаборатория CAMPAR и кафедра робототехники)</div>
+					</li>
+					<li>
+						<div class="font-bold text-white">МГТУ им. Н. Э. Баумана</div>
+						<div class="text-slate-400">Специалист / Магистр по оптико-электронным приборам и системам</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="bg-slate-900/30 border border-slate-800/80 rounded-lg p-5 space-y-3">
+				<div class="text-xs font-bold text-brand-accent">// ПУБЛИКАЦИИ И OPEN SOURCE</div>
+				<ul class="space-y-3 text-xs text-slate-300">
+					<li>
+						<div class="font-bold text-white">Публикация в IEEE Xplore</div>
+						<div class="text-slate-400">Рецензируемая научная работа в области вычислительных и инженерных систем</div>
+					</li>
+					<li>
+						<div class="font-bold text-white">Экосистема Hugging Face и GitHub</div>
+						<div class="text-slate-400">Опубликованные детекторы YOLO11n и held-out бенчмарки распознавания жестов ASL (CC-BY-4.0 / MIT)</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- Languages & Direct Channels -->
+		<div class="bg-slate-900/20 border border-slate-800 rounded-lg p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+			<div class="space-y-1 text-xs">
+				<div class="text-white font-bold">Языки и контакты</div>
+				<div class="text-slate-400">Русский (родной) · Английский (C2 / свободный) · Немецкий (B2)</div>
+			</div>
+			<div class="flex flex-wrap gap-3 text-xs font-bold">
+				<a href="https://t.me/ajdanoff" target="_blank" class="bg-brand-accent text-brand-dark px-3 py-1.5 rounded hover:bg-sky-400 transition-colors">
+					Telegram ↗
+				</a>
+				<a href="mailto:alexander.jdanoff@gmail.com" class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1.5 rounded hover:bg-slate-700 transition-colors">
+					Email
+				</a>
+			</div>
+		</div>
+
+	</section>
+</MainLayout>

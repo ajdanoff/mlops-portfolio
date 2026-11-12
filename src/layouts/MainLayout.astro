@@ -1,51 +1,85 @@
 ---
 import '../styles/global.css';
+import { getLangFromUrl, useTranslations } from '../i18n/ui';
 
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const lang = getLangFromUrl(Astro.url, base);
+const t = useTranslations(lang);
+
+// Вычисляем путь для переключения языка на текущей странице
+const currentSubPath = Astro.url.pathname
+	.replace(base, '')
+	.replace(/^\/ru(\/|$)/, '/')
+	.replace(/^\/+/, '');
+
+const enUrl = `${base}/${currentSubPath}`.replace(/\/+/g, '/');
+const ruUrl = `${base}/ru/${currentSubPath}`.replace(/\/+/g, '/');
+const homePrefix = lang === 'ru' ? `${base}/ru` : base;
 ---
 
 <!doctype html>
-<html lang="en" class="bg-brand-dark">
+<html lang={lang} class="bg-brand-dark">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
-		<title>{title} | Aleksandr Zhdanov</title>
+		<link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+		<title>{title} | {lang === 'ru' ? 'Александр Жданов' : 'Aleksandr Zhdanov'}</title>
 	</head>
-	<body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen Selection:bg-brand-accent/30 selection:text-white">
+	<body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white">
 		
-		<!-- Engineering Header Branding Bar -->
+		<!-- Header -->
 		<header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50">
 			<div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
 				<div class="flex items-center space-x-3">
 					<span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-					<a href={`${import.meta.env.BASE_URL}/`} class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
-                        ajdanoff // <span class="text-brand-accent">MLOps & Infrastructure Engineer</span>
-                    </a>
+					<a href={`${homePrefix}/`} class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+						ajdanoff // <span class="text-brand-accent">{t('role.subtitle')}</span>
+					</a>
 				</div>
-				<nav class="flex items-center space-x-6 text-xs font-semibold tracking-wide text-slate-400">
-				    <a href={`${import.meta.env.BASE_URL}/#projects`} class="hover:text-slate-100 transition-colors">/projects</a>
-					<a href={`${import.meta.env.BASE_URL}/notes`} class="hover:text-brand-accent transition-colors">/notes</a>
-					<a href={`${import.meta.env.BASE_URL}/#services`} class="hover:text-slate-100 transition-colors">/services</a>
-					<a href={`${import.meta.env.BASE_URL}/about`} class="hover:text-brand-accent transition-colors">/about</a>
-					<a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a>
-				</nav>
+
+				<div class="flex items-center space-x-6">
+					<nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400">
+						<a href={`${homePrefix}/#projects`} class="hover:text-slate-100 transition-colors">{t('nav.projects')}</a>
+						<a href={`${homePrefix}/notes`} class="hover:text-brand-accent transition-colors">{t('nav.notes')}</a>
+						<a href={`${homePrefix}/#services`} class="hover:text-slate-100 transition-colors">{t('nav.services')}</a>
+						<a href={`${homePrefix}/about`} class="hover:text-brand-accent transition-colors">{t('nav.about')}</a>
+						<a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a>
+					</nav>
+
+					<!-- Language Switcher EN / RU -->
+					<div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold">
+						<a
+							href={enUrl}
+							class={`px-1.5 py-0.5 rounded transition-colors ${lang === 'en' ? 'bg-brand-accent text-brand-dark' : 'text-slate-400 hover:text-white'}`}
+						>
+							EN
+						</a>
+						<span class="text-slate-700 mx-0.5">|</span>
+						<a
+							href={ruUrl}
+							class={`px-1.5 py-0.5 rounded transition-colors ${lang === 'ru' ? 'bg-brand-accent text-brand-dark' : 'text-slate-400 hover:text-white'}`}
+						>
+							RU
+						</a>
+					</div>
+				</div>
 			</div>
 		</header>
 
-		<!-- Main Workspace Canvas -->
+		<!-- Main Canvas -->
 		<main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12">
 			<slot />
 		</main>
 
-		<!-- Console System Footer -->
+		<!-- Footer -->
 		<footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider">
 			<div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-				<div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div>
+				<div>{t('footer.location')}</div>
 				<div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div>
 			</div>
 		</footer>

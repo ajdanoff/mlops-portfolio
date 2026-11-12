@@ -1,0 +1,161 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<MainLayout title="Инженер MLOps, CV и надёжной инфраструктуры">
+	
+	<!-- Hero -->
+	<section class="space-y-6 max-w-3xl pb-16 border-b border-slate-800/60">
+		<div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-xs text-slate-400">
+			<span class="text-emerald-400">✓</span> M.Sc. Computer Vision & Robotics @ TU Munich
+		</div>
+		<h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+			Проектирую отказоустойчивые пайплайны, микросервисы и <span class="text-brand-accent">Quality Gates</span> для продакшен ML-нагрузок.
+		</h1>
+		<p class="text-sm text-slate-400 font-normal leading-relaxed max-w-2xl">
+			Системный инженер с <span class="text-slate-200 font-bold">11-летним опытом в промышленной разработке и инфраструктуре</span> (Лаборатория Касперского, Datagile, R&D в Мюнхене). Специализируюсь на асинхронном инференсе VLM/CV-моделей, контрактном тестировании, ROS 2 и диагностике отказов в Kubernetes.
+		</p>
+		<div class="flex flex-wrap gap-3 pt-2">
+			<a href="https://github.com/ajdanoff" target="_blank" class="bg-brand-accent hover:bg-sky-400 text-brand-dark px-4 py-2 rounded text-xs font-bold transition-all shadow-sm">
+				Репозитории (GitHub)
+			</a>
+			<a href="https://t.me/ajdanoff" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 px-4 py-2 rounded text-xs font-semibold transition-all">
+				Связаться в Telegram ↗
+			</a>
+		</div>
+	</section>
+
+	<!-- Projects -->
+	<section id="projects" class="pt-16 space-y-8">
+		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
+			<h2 class="text-lg font-bold tracking-tight text-white">/ Ключевые инженерные проекты</h2>
+			<span class="text-[10px] text-slate-500 uppercase tracking-widest">4 продакшен-стека</span>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			
+			<!-- Project 1 -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							<a href={`${base}/cases/asl-recognition`}>ajdanoff / asl-gesture-recognition</a>
+						</h3>
+						<span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
+							CI Green
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Фреймворк конвертации датасетов и автоматического бенчмаркинга моделей. Включает <strong>GitHub Actions CI Quality Gates</strong> для проверки детекторов YOLO11n на оригинальных и аугментированных веб-кам наборах данных.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>Python // PyTorch // CI/CD</span>
+					<a href="https://github.com/ajdanoff/asl-gesture-recognition" target="_blank" class="text-brand-accent hover:underline">Код ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 2 -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							<a href={`${base}/cases/execution-platform`}>ajdanoff / ml-workload-execution-platform</a>
+						</h3>
+						<span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
+							Архитектура
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Асинхронная платформа исполнения долгих ML-задач (YOLOv8, Qwen2.5-VL) на изолированных воркерах. Реализует контрактное тестирование данных/моделей/API и 4-уровневую стратегию валидации релизов.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>FastAPI // RabbitMQ // AWQ квантование</span>
+					<a href="https://github.com/ajdanoff/ml-workload-execution-platform" target="_blank" class="text-brand-accent hover:underline">Код ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 3 -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							<a href={`${base}/cases/incident-lab`}>ajdanoff / incident-lab</a>
+						</h3>
+						<span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
+							Observability
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Лабораторный стенд в Kubernetes для воспроизведения деградации микросервисов под нагрузкой: <strong>CPU Throttling (CFS-квоты)</strong>, каскадные таймауты и реконнект-штормы с анализом метрик в Prometheus и Grafana.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>K8s // Prometheus // Grafana</span>
+					<a href="https://github.com/ajdanoff/incident-lab" target="_blank" class="text-brand-accent hover:underline">Код ↗</a>
+				</div>
+			</div>
+
+			<!-- Project 4 -->
+			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
+				<div class="space-y-4">
+					<div class="flex justify-between items-start">
+						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
+							<a href={`${base}/cases/gesture-swarm-ros2`}>ajdanoff / gesture-swarm-ros2</a>
+						</h3>
+						<span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded">
+							Робототехника
+						</span>
+					</div>
+					<p class="text-xs text-slate-400 leading-relaxed">
+						Модульный <strong>ROS 2 Python</strong> контур управления роем мобильных агентов по жестам. Разделяет детекцию YOLO11n, дедупликацию символов, временной консенсус <strong>RANSAC</strong> и маршрутизацию команд в <code>/cmd_vel</code>.
+					</p>
+				</div>
+				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
+					<span>Python // ROS 2 // YOLO11n // RANSAC</span>
+					<a href="https://github.com/ajdanoff/gesture-swarm-ros2" target="_blank" class="text-brand-accent hover:underline">Код ↗</a>
+				</div>
+			</div>
+
+		</div>
+	</section>
+
+	<!-- Services -->
+	<section id="services" class="pt-24 pb-12 space-y-8">
+		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
+			<h2 class="text-lg font-bold tracking-tight text-white">/ Инженерные услуги и консалтинг</h2>
+			<span class="text-[10px] text-brand-accent uppercase tracking-widest font-bold">Открыт к проектам и найму</span>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-brand-accent text-xs font-bold tracking-wider">// 01 // АРХИТЕКТУРА</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">MLOps-инфраструктура и инференс</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Вынос тяжёлого синхронного инференса (PyTorch, vLLM, TensorRT) из ASGI-серверов (FastAPI) в изолированные очереди (RabbitMQ, Celery, Redis) и оптимизация VLM/LLM моделей (квантование AWQ / 4-bit NF4) под лимиты VRAM.
+				</p>
+			</div>
+
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-emerald-400 text-xs font-bold tracking-wider">// 02 // КАЧЕСТВО И CI/CD</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">Автоматизация и Quality Gates</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Построение фреймворков интеграционного тестирования на pytest и внедрение автоматических ворот качества в CI/CD (GitHub Actions, GitLab CI): проверка контрактов API, дрейфа данных и регрессии метрик на held-out датасетах.
+				</p>
+			</div>
+
+			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
+				<div class="text-amber-400 text-xs font-bold tracking-wider">// 03 // НАДЁЖНОСТЬ</div>
+				<h3 class="text-sm font-bold text-white tracking-tight">Observability и нагрузочный аудит</h3>
+				<p class="text-xs text-slate-400 leading-relaxed">
+					Настройка мониторинга (Prometheus, Grafana), локализация деградации p95/p99 latency, устранение CPU Throttling в Kubernetes и проведение нагрузочного тестирования через Locust и k6.
+				</p>
+			</div>
+
+		</div>
+	</section>
+
+</MainLayout>
