@@ -1,9 +1,63 @@
 ---
 interface Props {
   title?: string;
+  lang?: 'en' | 'ru';
 }
 
-const { title = '8086 VGA Karate // Arcade Easter Egg' } = Astro.props;
+const {
+  title = '8086 VGA Karate // Arcade Easter Egg',
+  lang = 'en',
+} = Astro.props;
+
+const labels = lang === 'ru'
+  ? {
+      pause: 'Пауза [P]',
+      newMatch: 'Новый бой [R]',
+      move: 'ШАГ',
+      dash: 'РЫВОК',
+      highBlock: 'ВЕРХНИЙ БЛОК',
+      lowBlock: 'НИЖНИЙ БЛОК',
+      punch: 'УДАР РУКОЙ',
+      kick: 'ВЫСОКИЙ УДАР НОГОЙ',
+      lowKick: 'ПОДСЕЧКА',
+      backKick: 'УДАР НОГОЙ НАЗАД',
+      pauseLabel: 'ПАУЗА',
+      resetLabel: 'СБРОС МАТЧА',
+      or: 'или',
+      touchLeft: '◀ ВЛЕВО',
+      touchRight: 'ВПРАВО ▶',
+      touchDash: 'РЫВОК',
+      touchHiBlock: 'ВЕРХ. БЛОК',
+      touchLoBlock: 'НИЖН. БЛОК',
+      touchPunch: 'РУКА',
+      touchKick: 'НОГА',
+      touchLow: 'ПОДСЕЧКА',
+      touchBackKick: 'НАЗАД',
+    }
+  : {
+      pause: 'Pause [P]',
+      newMatch: 'New Match [R]',
+      move: 'MOVE',
+      dash: 'DASH',
+      highBlock: 'HIGH BLOCK',
+      lowBlock: 'LOW BLOCK',
+      punch: 'JAB PUNCH',
+      kick: 'HIGH KICK',
+      lowKick: 'LOW KICK',
+      backKick: 'BACK KICK',
+      pauseLabel: 'PAUSE',
+      resetLabel: 'RESET MATCH',
+      or: 'or',
+      touchLeft: '◀ LEFT',
+      touchRight: 'RIGHT ▶',
+      touchDash: 'DASH',
+      touchHiBlock: 'HI BLOCK',
+      touchLoBlock: 'LO BLOCK',
+      touchPunch: 'PUNCH',
+      touchKick: 'KICK',
+      touchLow: 'LOW KICK',
+      touchBackKick: 'BACK KICK',
+    };
 ---
 
 <section class="max-w-3xl mx-auto space-y-6">
@@ -30,14 +84,14 @@ const { title = '8086 VGA Karate // Arcade Easter Egg' } = Astro.props;
         id="pause-btn"
         class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors"
       >
-        Pause [P]
+        {labels.pause}
       </button>
 
       <button
         id="reset-btn"
         class="text-xs bg-brand-accent hover:bg-sky-400 text-brand-dark font-bold px-3 py-1.5 rounded transition-colors"
       >
-        New Match [R]
+        {labels.newMatch}
       </button>
     </div>
   </div>
@@ -65,7 +119,7 @@ const { title = '8086 VGA Karate // Arcade Easter Egg' } = Astro.props;
     </div>
 
     <div class="flex items-center justify-between pt-3 px-1 text-[10px] text-slate-500">
-      <span>IBM VGA 256-COLOR PALETTE // FSM COMBAT ENGINE</span>
+      <span>IBM VGA 256-COLOR PALETTE // 13-FRAME SPRITE FSM</span>
 
       <span class="flex items-center gap-1.5">
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -74,83 +128,95 @@ const { title = '8086 VGA Karate // Arcade Easter Egg' } = Astro.props;
     </div>
   </div>
 
+  <!-- Mobile Touch Controls -->
   <div class="grid grid-cols-3 gap-2 sm:hidden select-none">
     <button data-key="ArrowLeft" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
-      ◀ LEFT
+      {labels.touchLeft}
     </button>
 
     <button data-key="ArrowRight" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
-      RIGHT ▶
+      {labels.touchRight}
     </button>
 
     <button data-key="ShiftLeft" class="touch-btn bg-slate-900 border border-violet-500/40 active:bg-violet-500/20 py-3 rounded text-xs font-bold text-violet-300">
-      DASH
+      {labels.touchDash}
     </button>
 
     <button data-key="KeyW" class="touch-btn bg-slate-900 border border-amber-500/40 active:bg-amber-500/20 py-3 rounded text-xs font-bold text-amber-400">
-      BLOCK
+      {labels.touchHiBlock}
+    </button>
+
+    <button data-key="KeyS" class="touch-btn bg-slate-900 border border-amber-500/40 active:bg-amber-500/20 py-3 rounded text-xs font-bold text-amber-300">
+      {labels.touchLoBlock}
     </button>
 
     <button data-key="KeyJ" class="touch-btn bg-slate-900 border border-brand-accent/40 active:bg-brand-accent/20 py-3 rounded text-xs font-bold text-brand-accent">
-      PUNCH
+      {labels.touchPunch}
     </button>
 
     <button data-key="KeyK" class="touch-btn bg-slate-900 border border-emerald-500/40 active:bg-emerald-500/20 py-3 rounded text-xs font-bold text-emerald-400">
-      KICK
+      {labels.touchKick}
     </button>
 
     <button data-key="KeyL" class="touch-btn bg-slate-900 border border-rose-500/40 active:bg-rose-500/20 py-3 rounded text-xs font-bold text-rose-400">
-      LOW
+      {labels.touchLow}
     </button>
 
-    <button data-key="KeyP" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
-      PAUSE
-    </button>
-
-    <button data-key="KeyR" class="touch-btn bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
-      RESET
+    <button data-key="KeyB" class="touch-btn bg-slate-900 border border-cyan-500/40 active:bg-cyan-500/20 py-3 rounded text-xs font-bold text-cyan-300">
+      {labels.touchBackKick}
     </button>
   </div>
 
-  <div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+  <!-- Controls Cheat Sheet (All 13-Frame Moves) -->
+  <div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
     <div>
-      <span class="text-slate-500 block text-[10px]">MOVE</span>
-      <span class="text-white font-bold">[A / D] or [← / →]</span>
+      <span class="text-slate-500 block text-[10px]">{labels.move}</span>
+      <span class="text-white font-bold">[A / D] {labels.or} [← / →]</span>
     </div>
 
     <div>
-      <span class="text-slate-500 block text-[10px]">HIGH BLOCK</span>
-      <span class="text-amber-400 font-bold">[W] or [↑]</span>
-    </div>
-
-    <div>
-      <span class="text-slate-500 block text-[10px]">JAB PUNCH</span>
-      <span class="text-brand-accent font-bold">[J] or [Z]</span>
-    </div>
-
-    <div>
-      <span class="text-slate-500 block text-[10px]">HIGH KICK</span>
-      <span class="text-emerald-400 font-bold">[K] or [X]</span>
-    </div>
-
-    <div>
-      <span class="text-slate-500 block text-[10px]">LOW KICK</span>
-      <span class="text-rose-400 font-bold">[L] or [C]</span>
-    </div>
-
-    <div>
-      <span class="text-slate-500 block text-[10px]">DASH</span>
+      <span class="text-slate-500 block text-[10px]">{labels.dash}</span>
       <span class="text-violet-300 font-bold">[SHIFT]</span>
     </div>
 
     <div>
-      <span class="text-slate-500 block text-[10px]">PAUSE</span>
-      <span class="text-white font-bold">[P] or [ESC]</span>
+      <span class="text-slate-500 block text-[10px]">{labels.highBlock}</span>
+      <span class="text-amber-400 font-bold">[W] {labels.or} [↑]</span>
     </div>
 
     <div>
-      <span class="text-slate-500 block text-[10px]">RESET MATCH</span>
-      <span class="text-white font-bold">[R]</span>
+      <span class="text-slate-500 block text-[10px]">{labels.lowBlock}</span>
+      <span class="text-amber-300 font-bold">[S] {labels.or} [↓]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.punch}</span>
+      <span class="text-brand-accent font-bold">[J] {labels.or} [Z]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.kick}</span>
+      <span class="text-emerald-400 font-bold">[K] {labels.or} [X]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.lowKick}</span>
+      <span class="text-rose-400 font-bold">[L] {labels.or} [C]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.backKick}</span>
+      <span class="text-cyan-300 font-bold">[B] {labels.or} [V]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.pauseLabel}</span>
+      <span class="text-slate-300 font-bold">[P] {labels.or} [ESC]</span>
+    </div>
+
+    <div>
+      <span class="text-slate-500 block text-[10px]">{labels.resetLabel}</span>
+      <span class="text-slate-300 font-bold">[R]</span>
     </div>
   </div>
 </section>
