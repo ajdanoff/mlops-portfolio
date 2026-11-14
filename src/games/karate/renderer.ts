@@ -1,207 +1,179 @@
 import type { Fighter, GameContext } from './types';
 import { ARENA } from './types';
+import { color } from './palette';
+import { getFighterSprites } from './sprites';
 
 export function drawBackground(context: CanvasRenderingContext2D): void {
-  context.fillStyle = '#071329';
-  context.fillRect(0, 0, ARENA.width, 60);
+  drawSky(context);
+  drawMoon(context);
+  drawMountains(context);
+  drawToriiGate(context);
+  drawFloor(context);
+}
 
-  context.fillStyle = '#0C2147';
-  context.fillRect(0, 60, ARENA.width, 45);
+function drawSky(context: CanvasRenderingContext2D): void {
+  context.fillStyle = color('black');
+  context.fillRect(0, 0, ARENA.width, 34);
 
-  context.fillStyle = '#153466';
-  context.fillRect(0, 105, ARENA.width, 35);
+  context.fillStyle = color('darkBlue');
+  context.fillRect(0, 34, ARENA.width, 38);
 
-  context.fillStyle = '#F59E0B';
+  context.fillStyle = color('blue');
+  context.fillRect(0, 72, ARENA.width, 32);
+
+  context.fillStyle = color('lightBlue');
+  context.fillRect(0, 104, ARENA.width, 36);
+}
+
+function drawMoon(context: CanvasRenderingContext2D): void {
+  context.fillStyle = color('yellow');
   context.beginPath();
-  context.arc(255, 52, 18, 0, Math.PI * 2);
+  context.arc(258, 44, 16, 0, Math.PI * 2);
   context.fill();
 
-  context.fillStyle = '#0F172A';
+  context.fillStyle = color('orange');
   context.beginPath();
-  context.moveTo(140, 140);
-  context.lineTo(215, 72);
-  context.lineTo(235, 72);
-  context.lineTo(310, 140);
+  context.arc(258, 44, 16, Math.PI * 0.15, Math.PI * 0.85);
+  context.fill();
+}
+
+function drawMountains(context: CanvasRenderingContext2D): void {
+  context.fillStyle = color('darkBlue');
+  context.beginPath();
+  context.moveTo(0, 140);
+  context.lineTo(52, 96);
+  context.lineTo(104, 140);
   context.fill();
 
-  context.fillStyle = '#E2E8F0';
+  context.fillStyle = color('blue');
   context.beginPath();
-  context.moveTo(197, 88);
-  context.lineTo(215, 72);
-  context.lineTo(235, 72);
-  context.lineTo(252, 88);
-  context.lineTo(238, 84);
-  context.lineTo(225, 91);
-  context.lineTo(212, 84);
+  context.moveTo(126, 140);
+  context.lineTo(216, 66);
+  context.lineTo(306, 140);
   context.fill();
 
-  context.fillStyle = '#7F1D1D';
-  context.fillRect(42, 78, 6, 62);
-  context.fillRect(88, 78, 6, 62);
+  context.fillStyle = color('white');
+  context.beginPath();
+  context.moveTo(196, 86);
+  context.lineTo(216, 66);
+  context.lineTo(238, 86);
+  context.lineTo(228, 82);
+  context.lineTo(216, 90);
+  context.lineTo(204, 82);
+  context.fill();
+}
 
-  context.fillStyle = '#B91C1C';
-  context.fillRect(32, 74, 72, 6);
-  context.fillRect(38, 88, 60, 4);
+function drawToriiGate(context: CanvasRenderingContext2D): void {
+  context.fillStyle = color('darkRed');
+  context.fillRect(40, 76, 7, 64);
+  context.fillRect(90, 76, 7, 64);
 
-  context.fillStyle = '#1E293B';
+  context.fillStyle = color('red');
+  context.fillRect(28, 70, 82, 7);
+  context.fillRect(34, 86, 70, 4);
+
+  context.fillStyle = color('black');
+  context.fillRect(28, 77, 82, 2);
+}
+
+function drawFloor(context: CanvasRenderingContext2D): void {
+  context.fillStyle = color('darkGray');
   context.fillRect(0, 140, ARENA.width, 60);
 
-  context.fillStyle = '#334155';
+  context.fillStyle = color('gray');
   context.fillRect(0, 140, ARENA.width, 3);
 
-  context.fillStyle = '#0F172A';
+  context.fillStyle = color('black');
 
-  for (let x = 0; x <= ARENA.width; x += 32) {
-    context.fillRect(x, 143, 2, 57);
+  for (let x = 0; x <= ARENA.width; x += 24) {
+    context.fillRect(x, 143, 1, 57);
   }
 
-  context.fillRect(0, 162, ARENA.width, 2);
-  context.fillRect(0, 184, ARENA.width, 2);
+  context.fillRect(0, 163, ARENA.width, 1);
+  context.fillRect(0, 181, ARENA.width, 1);
+
+  context.fillStyle = color('darkGreen');
+  context.fillRect(0, 138, ARENA.width, 2);
+}
+
+function getFrameIndex(fighter: Fighter, tick: number): number {
+  switch (fighter.state) {
+    case 'PUNCH':
+      return fighter.combo % 2 === 0 ? 0 : 6; // 0: left-hand-kick, 6: right-hand-kick
+    case 'BLOCK':
+      return Math.floor(tick / 14) % 2 === 0 ? 1 : 11; // 1: upper-block, 11: middle-block
+    case 'KICK':
+      return 3; // 3: yoko-geri
+    case 'LOW_KICK':
+      return 4; // 4: kae-mae
+    case 'LOW_BLOCK':
+      return 5; // 5: lower-block
+    case 'STUN':
+    case 'KO':
+      return 7; // 7: ko
+    case 'WALK_BACK':
+      return Math.floor(tick / 8) % 2 === 0 ? 8 : 9; // 8: normal-stance, 9: move-back
+    case 'WALK':
+      return Math.floor(tick / 8) % 2 === 0 ? 8 : 10; // 8: normal-stance, 10: move-forward
+    case 'DASH':
+      return 10; // 10: move-forward
+    case 'BACK_KICK':
+      return 12; // 12: back-kick
+    case 'IDLE':
+    default:
+      return Math.floor(tick / 24) % 2 === 0 ? 8 : 2; // 8: normal-stance, 2: stance
+  }
 }
 
 export function drawFighter(
   context: CanvasRenderingContext2D,
   fighter: Fighter,
   tick: number,
+  isPlayer: boolean,
 ): void {
   context.save();
 
-  const bob = fighter.state === 'IDLE'
-    ? Math.floor(Math.sin(tick * 0.15) * 1.5)
+  const idleBob = fighter.state === 'IDLE'
+    ? Math.round(Math.sin(tick * 0.12) * 1)
     : 0;
 
-  const walkStride = fighter.state === 'WALK'
-    ? Math.floor(Math.sin(tick * 0.35) * 4)
-    : 0;
+  const baseY = ARENA.floorY + idleBob;
 
-  context.translate(Math.round(fighter.x), ARENA.floorY + bob);
+  context.translate(Math.round(fighter.x), baseY);
   context.scale(fighter.facing, 1);
 
-  context.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  context.fillRect(-14, -2, 28, 5);
+  drawShadow(context);
 
-  if (fighter.state === 'KO') {
-    drawKnockedOutFighter(context, fighter);
+  const sheets = getFighterSprites();
+  if (sheets) {
+    const sheet = isPlayer ? sheets.player : sheets.cpu;
+    const frameIdx = getFrameIndex(fighter, tick);
+
+    context.drawImage(
+      sheet,
+      frameIdx * sheets.frameWidth,
+      0,
+      sheets.frameWidth,
+      sheets.frameHeight,
+      -32,
+      -62,
+      64,
+      64,
+    );
+
     context.restore();
-
     return;
   }
 
-  const torsoShift = fighter.state === 'STUN' ? -4 : 0;
-
-  context.fillStyle = fighter.giShade;
-  context.fillRect(-9 - walkStride, -24, 7, 24);
-
-  drawLeg(context, fighter);
-
+  // Fallback пока грузится PNG
   context.fillStyle = fighter.giColor;
-  context.fillRect(-10 + torsoShift, -48, 20, 25);
-
-  context.fillStyle = fighter.beltColor;
-  context.fillRect(-10 + torsoShift, -28, 20, 4);
-  context.fillRect(2 + torsoShift, -24, 4, 7);
-
-  context.fillStyle = '#FDBA74';
-  context.fillRect(-6 + torsoShift, -61, 13, 12);
-
-  context.fillStyle = '#0F172A';
-  context.fillRect(-7 + torsoShift, -63, 14, 4);
-
-  context.fillStyle = fighter.headband;
-  context.fillRect(-7 + torsoShift, -59, 14, 3);
-  context.fillRect(-11 + torsoShift, -58, 4, 6);
-
-  drawArms(context, fighter, torsoShift);
-
+  context.fillRect(-10, -48, 20, 48);
   context.restore();
 }
 
-function drawLeg(
-  context: CanvasRenderingContext2D,
-  fighter: Fighter,
-): void {
-  if (fighter.state === 'KICK') {
-    context.fillStyle = fighter.giColor;
-    context.fillRect(4, -34, 28, 7);
-
-    context.fillStyle = '#FDBA74';
-    context.fillRect(32, -35, 6, 7);
-
-    return;
-  }
-
-  if (fighter.state === 'LOW_KICK') {
-    context.fillStyle = fighter.giColor;
-    context.fillRect(4, -16, 26, 7);
-
-    context.fillStyle = '#FDBA74';
-    context.fillRect(30, -17, 6, 7);
-
-    return;
-  }
-
-  const stride = fighter.state === 'WALK'
-    ? Math.floor(Math.sin(Date.now() * 0.02) * 2)
-    : 0;
-
-  context.fillStyle = fighter.giColor;
-  context.fillRect(2 + stride, -24, 7, 24);
-}
-
-function drawArms(
-  context: CanvasRenderingContext2D,
-  fighter: Fighter,
-  torsoShift: number,
-): void {
-  if (fighter.state === 'PUNCH') {
-    context.fillStyle = fighter.giColor;
-    context.fillRect(6, -45, 22, 6);
-
-    context.fillStyle = '#FDBA74';
-    context.fillRect(28, -45, 6, 6);
-
-    return;
-  }
-
-  if (fighter.state === 'BLOCK') {
-    context.fillStyle = fighter.giColor;
-    context.fillRect(7, -54, 6, 18);
-
-    context.fillStyle = '#FDBA74';
-    context.fillRect(7, -58, 6, 5);
-
-    return;
-  }
-
-  if (fighter.state === 'LOW_KICK') {
-    context.fillStyle = fighter.giColor;
-    context.fillRect(2 + torsoShift, -40, 10, 6);
-
-    return;
-  }
-
-  context.fillStyle = fighter.giColor;
-  context.fillRect(4 + torsoShift, -44, 10, 6);
-
-  context.fillStyle = '#FDBA74';
-  context.fillRect(14 + torsoShift, -45, 5, 5);
-}
-
-function drawKnockedOutFighter(
-  context: CanvasRenderingContext2D,
-  fighter: Fighter,
-): void {
-  context.fillStyle = fighter.giColor;
-  context.fillRect(-24, -10, 36, 10);
-
-  context.fillStyle = fighter.beltColor;
-  context.fillRect(-8, -10, 4, 10);
-
-  context.fillStyle = '#FDBA74';
-  context.fillRect(12, -10, 10, 9);
-
-  context.fillStyle = fighter.headband;
-  context.fillRect(15, -10, 3, 9);
+function drawShadow(context: CanvasRenderingContext2D): void {
+  context.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  context.fillRect(-13, -1, 26, 4);
 }
 
 export function drawParticles(game: GameContext): void {

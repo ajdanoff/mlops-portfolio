@@ -22,11 +22,12 @@ export function createFighter(isPlayer: boolean): Fighter {
 
 export function triggerAttack(
   fighter: Fighter,
-  attack: 'PUNCH' | 'KICK' | 'LOW_KICK',
+  attack: 'PUNCH' | 'KICK' | 'LOW_KICK' | 'BACK_KICK',
 ): void {
   const canAttack =
     fighter.state === 'IDLE' ||
-    fighter.state === 'WALK';
+    fighter.state === 'WALK' ||
+    fighter.state === 'WALK_BACK';
 
   if (!canAttack) {
     return;
@@ -40,14 +41,16 @@ export function triggerAttack(
       ? 18
       : attack === 'KICK'
         ? 26
-        : 30;
+        : attack === 'BACK_KICK'
+          ? 24
+          : 30;
 
   sfx.whiff();
 }
 
 export function tryDash(fighter: Fighter): void {
   const canDash =
-    (fighter.state === 'IDLE' || fighter.state === 'WALK') &&
+    (fighter.state === 'IDLE' || fighter.state === 'WALK' || fighter.state === 'WALK_BACK') &&
     fighter.dashCooldown === 0;
 
   if (!canDash) {

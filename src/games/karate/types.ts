@@ -1,10 +1,13 @@
 export type FighterState =
   | 'IDLE'
   | 'WALK'
+  | 'WALK_BACK'
   | 'BLOCK'
+  | 'LOW_BLOCK'
   | 'PUNCH'
   | 'KICK'
   | 'LOW_KICK'
+  | 'BACK_KICK'
   | 'DASH'
   | 'STUN'
   | 'KO';

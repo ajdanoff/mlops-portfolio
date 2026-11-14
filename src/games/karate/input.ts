@@ -16,9 +16,11 @@ const START_KEYS = [
   'KeyJ',
   'KeyK',
   'KeyL',
+  'KeyB',
   'KeyZ',
   'KeyX',
   'KeyC',
+  'KeyV',
 ];
 
 export function bindKeyboard(game: GameContext): void {
@@ -31,13 +33,11 @@ export function bindKeyboard(game: GameContext): void {
 
     if (event.code === 'KeyR') {
       resetMatch(game);
-
       return;
     }
 
     if (event.code === 'KeyP' || event.code === 'Escape') {
       togglePause(game);
-
       return;
     }
 
@@ -45,7 +45,6 @@ export function bindKeyboard(game: GameContext): void {
       if (START_KEYS.includes(event.code)) {
         startOrContinue(game);
       }
-
       return;
     }
 
@@ -59,6 +58,10 @@ export function bindKeyboard(game: GameContext): void {
 
     if (event.code === 'KeyL' || event.code === 'KeyC') {
       triggerAttack(game.player, 'LOW_KICK');
+    }
+
+    if (event.code === 'KeyB' || event.code === 'KeyV') {
+      triggerAttack(game.player, 'BACK_KICK');
     }
 
     if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
@@ -83,37 +86,24 @@ export function bindTouchControls(game: GameContext): void {
 
       if (code === 'KeyR') {
         resetMatch(game);
-
         return;
       }
 
       if (code === 'KeyP') {
         togglePause(game);
-
         return;
       }
 
       if (game.phase !== 'FIGHT') {
         startOrContinue(game);
-
         return;
       }
 
-      if (code === 'KeyJ') {
-        triggerAttack(game.player, 'PUNCH');
-      }
-
-      if (code === 'KeyK') {
-        triggerAttack(game.player, 'KICK');
-      }
-
-      if (code === 'KeyL') {
-        triggerAttack(game.player, 'LOW_KICK');
-      }
-
-      if (code === 'ShiftLeft') {
-        tryDash(game.player);
-      }
+      if (code === 'KeyJ') triggerAttack(game.player, 'PUNCH');
+      if (code === 'KeyK') triggerAttack(game.player, 'KICK');
+      if (code === 'KeyL') triggerAttack(game.player, 'LOW_KICK');
+      if (code === 'KeyB') triggerAttack(game.player, 'BACK_KICK');
+      if (code === 'ShiftLeft') tryDash(game.player);
     });
 
     button.addEventListener('touchend', (event) => {
@@ -134,15 +124,12 @@ export function bindUiButtons(game: GameContext): void {
 
   document
     .getElementById('mute-btn')
-    ?.addEventListener('click', (event) => {
+    ?.addEventListener('click', async (event) => {
       const button = event.currentTarget as HTMLButtonElement | null;
+      if (!button) return;
 
-      if (!button) {
-        return;
-      }
-
-      const muted = toggleMuteState();
-
+      const { toggleMute } = await import('./audio');
+      const muted = toggleMute();
       button.textContent = `PC Speaker: ${muted ? 'OFF' : 'ON'}`;
     });
 }
@@ -151,7 +138,6 @@ function togglePause(game: GameContext): void {
   if (game.phase === 'FIGHT') {
     game.phase = 'PAUSED';
     game.banner = 'PAUSED - PRESS P TO RESUME';
-
     return;
   }
 
@@ -159,10 +145,4 @@ function togglePause(game: GameContext): void {
     game.phase = 'FIGHT';
     game.banner = '';
   }
-}
-
-async function toggleMuteState(): Promise<boolean> {
-  const { toggleMute } = await import('./audio');
-
-  return toggleMute();
 }
