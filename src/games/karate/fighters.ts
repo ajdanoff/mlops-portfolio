@@ -12,6 +12,9 @@ const MOVABLE_STATES: FighterState[] = [
   'IDLE',
   'WALK',
   'WALK_BACK',
+  'BLOCK',
+  'MID_BLOCK',
+  'LOW_BLOCK',
 ];
 
 export const ATTACK_DATA = {
