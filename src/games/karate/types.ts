@@ -3,6 +3,7 @@ export type FighterState =
   | 'WALK'
   | 'WALK_BACK'
   | 'BLOCK'
+  | 'MID_BLOCK'
   | 'LOW_BLOCK'
   | 'PUNCH'
   | 'KICK'
@@ -12,6 +13,17 @@ export type FighterState =
   | 'STUN'
   | 'KO';
 
+export type AttackType =
+  | 'PUNCH'
+  | 'KICK'
+  | 'LOW_KICK'
+  | 'BACK_KICK';
+
+export type BlockType =
+  | 'BLOCK'
+  | 'MID_BLOCK'
+  | 'LOW_BLOCK';
+
 export type GamePhase =
   | 'TITLE'
   | 'FIGHT'
@@ -19,21 +31,39 @@ export type GamePhase =
   | 'MATCH_OVER'
   | 'PAUSED';
 
+export interface AttackData {
+  duration: number;
+  startup: number;
+  active: number;
+  recovery: number;
+  damage: number;
+  reach: number;
+  knockback: number;
+}
+
+export interface FighterPalette {
+  gi: string;
+  giShade: string;
+  belt: string;
+  headband: string;
+  skin: string;
+  hair: string;
+}
+
 export interface Fighter {
   name: string;
+  isPlayer: boolean;
   x: number;
   facing: 1 | -1;
   hp: number;
   maxHp: number;
   state: FighterState;
   timer: number;
+  animationTime: number;
   hasHit: boolean;
   dashCooldown: number;
   combo: number;
-  giColor: string;
-  giShade: string;
-  beltColor: string;
-  headband: string;
+  palette: FighterPalette;
 }
 
 export interface Particle {
@@ -48,6 +78,7 @@ export interface Particle {
 export interface GameContext {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  sprites: SpriteSheetSet;
   player: Fighter;
   cpu: Fighter;
   particles: Particle[];
@@ -61,6 +92,21 @@ export interface GameContext {
   screenShake: number;
   hitFlash: number;
   tick: number;
+}
+
+export interface SpriteAnimation {
+  frames: number[];
+  frameDuration: number;
+  loop: boolean;
+}
+
+export interface SpriteSheetSet {
+  player: HTMLCanvasElement;
+  cpu: HTMLCanvasElement;
+  frameWidth: number;
+  frameHeight: number;
+  frameCount: number;
+  animations: Record<string, SpriteAnimation>;
 }
 
 export const ARENA = {

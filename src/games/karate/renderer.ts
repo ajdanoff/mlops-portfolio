@@ -1,9 +1,19 @@
-import type { Fighter, GameContext } from './types';
+import type {
+  Fighter,
+  GameContext,
+} from './types';
 import { ARENA } from './types';
-import { color } from './palette';
-import { getFighterSprites } from './sprites';
+import {
+  color,
+  effectColor,
+  uiColor,
+} from './palette';
+import { FIGHTER_ANIMATIONS } from './fighter-sprites';
+import { drawSpriteFrame } from './sprites';
 
-export function drawBackground(context: CanvasRenderingContext2D): void {
+export function drawBackground(
+  context: CanvasRenderingContext2D,
+): void {
   drawSky(context);
   drawMoon(context);
   drawMountains(context);
@@ -96,84 +106,54 @@ function drawFloor(context: CanvasRenderingContext2D): void {
   context.fillRect(0, 138, ARENA.width, 2);
 }
 
-function getFrameIndex(fighter: Fighter, tick: number): number {
-  switch (fighter.state) {
-    case 'PUNCH':
-      return fighter.combo % 2 === 0 ? 0 : 6; // 0: left-hand-kick, 6: right-hand-kick
-    case 'BLOCK':
-      return Math.floor(tick / 14) % 2 === 0 ? 1 : 11; // 1: upper-block, 11: middle-block
-    case 'KICK':
-      return 3; // 3: yoko-geri
-    case 'LOW_KICK':
-      return 4; // 4: kae-mae
-    case 'LOW_BLOCK':
-      return 5; // 5: lower-block
-    case 'STUN':
-    case 'KO':
-      return 7; // 7: ko
-    case 'WALK_BACK':
-      return Math.floor(tick / 8) % 2 === 0 ? 8 : 9; // 8: normal-stance, 9: move-back
-    case 'WALK':
-      return Math.floor(tick / 8) % 2 === 0 ? 8 : 10; // 8: normal-stance, 10: move-forward
-    case 'DASH':
-      return 10; // 10: move-forward
-    case 'BACK_KICK':
-      return 12; // 12: back-kick
-    case 'IDLE':
-    default:
-      return Math.floor(tick / 24) % 2 === 0 ? 8 : 2; // 8: normal-stance, 2: stance
-  }
-}
-
 export function drawFighter(
   context: CanvasRenderingContext2D,
   fighter: Fighter,
-  tick: number,
-  isPlayer: boolean,
+  game: GameContext,
 ): void {
-  context.save();
+  const sheet = fighter.isPlayer
+    ? game.sprites.player
+    : game.sprites.cpu;
 
-  const idleBob = fighter.state === 'IDLE'
-    ? Math.round(Math.sin(tick * 0.12) * 1)
+  const animation = FIGHTER_ANIMATIONS[fighter.state] ??
+    FIGHTER_ANIMATIONS.IDLE;
+
+  const bob = fighter.state === 'IDLE'
+    ? Math.round(Math.sin(fighter.animationTime * 0.12))
     : 0;
 
-  const baseY = ARENA.floorY + idleBob;
+  const baseY = ARENA.floorY + bob;
 
-  context.translate(Math.round(fighter.x), baseY);
-  context.scale(fighter.facing, 1);
+  drawShadow(context, fighter.x, baseY);
 
-  drawShadow(context);
-
-  const sheets = getFighterSprites();
-  if (sheets) {
-    const sheet = isPlayer ? sheets.player : sheets.cpu;
-    const frameIdx = getFrameIndex(fighter, tick);
-
-    context.drawImage(
-      sheet,
-      frameIdx * sheets.frameWidth,
-      0,
-      sheets.frameWidth,
-      sheets.frameHeight,
-      -32,
-      -62,
-      64,
-      64,
-    );
-
-    context.restore();
-    return;
-  }
-
-  // Fallback пока грузится PNG
-  context.fillStyle = fighter.giColor;
-  context.fillRect(-10, -48, 20, 48);
-  context.restore();
+  //const animation = FIGHTER_ANIMATIONS[fighter.state] ??
+  //FIGHTER_ANIMATIONS.IDLE;
+  
+  drawSpriteFrame(
+    context,
+    sheet,
+    game.sprites.frameWidth,
+    game.sprites.frameHeight,
+    animation,
+    fighter.animationTime,
+    fighter.x,
+    baseY,
+    fighter.facing,
+  );
 }
 
-function drawShadow(context: CanvasRenderingContext2D): void {
+function drawShadow(
+  context: CanvasRenderingContext2D,
+  x: number,
+  baseY: number,
+): void {
   context.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  context.fillRect(-13, -1, 26, 4);
+  context.fillRect(
+    Math.round(x) - 13,
+    baseY - 1,
+    26,
+    4,
+  );
 }
 
 export function drawParticles(game: GameContext): void {
@@ -209,17 +189,20 @@ export function drawHUD(game: GameContext): void {
     'right',
   );
 
-  context.fillStyle = '#38BDF8';
+  context.fillStyle = uiColor('primary');
   context.textAlign = 'center';
   context.fillText(`R-${game.round}`, 160, 14);
 
   const seconds = Math.max(0, Math.ceil(game.roundTimer));
 
-  context.fillStyle = seconds <= 10 ? '#EF4444' : '#F8FAFC';
+  context.fillStyle = seconds <= 10
+    ? uiColor('danger')
+    : uiColor('text');
+
   context.fillText(`${seconds}s`, 160, 26);
 
   if (game.player.combo >= 2) {
-    context.fillStyle = '#FACC15';
+    context.fillStyle = uiColor('warning');
     context.fillText(`${game.player.combo} HIT COMBO`, 160, 42);
   }
 
@@ -237,20 +220,23 @@ function drawHealthBar(
   label: string,
   align: 'left' | 'right',
 ): void {
-  context.fillStyle = '#FFFFFF';
+  context.fillStyle = uiColor('text');
   context.textAlign = align;
   context.fillText(label, align === 'left' ? x : x + 110, 14);
 
   const width = Math.round((fighter.hp / fighter.maxHp) * 110);
   const barX = align === 'left' ? x : x + (110 - width);
 
-  context.fillStyle = '#1E293B';
+  context.fillStyle = color('darkGray');
   context.fillRect(x, 18, 110, 8);
 
-  context.fillStyle = fighter.hp > 30 ? '#10B981' : '#EF4444';
+  context.fillStyle = fighter.hp > 30
+    ? uiColor('success')
+    : uiColor('danger');
+
   context.fillRect(barX, 18, width, 8);
 
-  context.strokeStyle = '#64748B';
+  context.strokeStyle = color('gray');
   context.strokeRect(x, 18, 110, 8);
 
   context.textAlign = 'left';
@@ -259,13 +245,13 @@ function drawHealthBar(
 function drawBanner(game: GameContext): void {
   const context = game.context;
 
-  context.fillStyle = 'rgba(11, 15, 25, 0.78)';
+  context.fillStyle = 'rgba(5, 6, 10, 0.78)';
   context.fillRect(18, 78, 284, 42);
 
-  context.strokeStyle = '#38BDF8';
+  context.strokeStyle = uiColor('primary');
   context.strokeRect(18, 78, 284, 42);
 
-  context.fillStyle = '#F8FAFC';
+  context.fillStyle = uiColor('text');
   context.font = 'bold 9px monospace';
   context.textAlign = 'center';
   context.fillText(game.banner, 160, 102);

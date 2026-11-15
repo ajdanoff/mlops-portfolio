@@ -1,18 +1,35 @@
-import type { Fighter, GameContext, Particle } from './types';
+import type {
+  AttackType,
+  Fighter,
+  GameContext,
+  Particle,
+} from './types';
 import { ARENA, MATCH } from './types';
-import { createFighter } from './fighters';
+import {
+  ATTACK_DATA,
+  canAct,
+  createFighter,
+  setState,
+} from './fighters';
 import { updateAI, resetAI } from './ai';
 import { sfx } from './audio';
 import { loadFighterSprites } from './sprites';
+import { FIGHTER_ANIMATIONS } from './fighter-sprites';
 import {
   drawBackground,
   drawFighter,
   drawParticles,
   drawHUD,
 } from './renderer';
-import { bindKeyboard, bindTouchControls, bindUiButtons } from './input';
+import {
+  bindKeyboard,
+  bindTouchControls,
+  bindUiButtons,
+} from './input';
 
-export function initKarateGame(canvas: HTMLCanvasElement): void {
+export async function initKarateGame(
+  canvas: HTMLCanvasElement,
+): Promise<void> {
   const context = canvas.getContext('2d');
 
   if (!context) {
@@ -20,11 +37,15 @@ export function initKarateGame(canvas: HTMLCanvasElement): void {
   }
 
   context.imageSmoothingEnabled = false;
-  loadFighterSprites();
+
+  const sprites = await loadFighterSprites(
+    FIGHTER_ANIMATIONS,
+  );
 
   const game: GameContext = {
     canvas,
     context,
+    sprites,
     player: createFighter(true),
     cpu: createFighter(false),
     particles: [],
@@ -91,12 +112,14 @@ export function resetMatch(game: GameContext): void {
 export function startOrContinue(game: GameContext): void {
   if (game.phase === 'TITLE' || game.phase === 'PAUSED') {
     startRound(game);
+
     return;
   }
 
   if (game.phase === 'ROUND_OVER') {
     game.round++;
     startRound(game);
+
     return;
   }
 
@@ -108,6 +131,7 @@ export function startOrContinue(game: GameContext): void {
 function update(game: GameContext, deltaTime: number): void {
   if (game.phase !== 'FIGHT') {
     updateParticles(game);
+
     return;
   }
 
@@ -118,17 +142,21 @@ function update(game: GameContext, deltaTime: number): void {
 
     if (game.player.hp === game.cpu.hp) {
       game.banner = 'DRAW! PRESS SPACE FOR NEXT ROUND';
-    } else {
-      endRound(game, game.player.hp > game.cpu.hp);
+      game.phase = 'ROUND_OVER';
+
+      return;
     }
 
-    game.phase = 'ROUND_OVER';
+    endRound(game, game.player.hp > game.cpu.hp);
+
     return;
   }
 
   updateAI(game);
+
   updateFighter(game, game.player, game.cpu, true);
   updateFighter(game, game.cpu, game.player, false);
+
   updateParticles(game);
 }
 
@@ -142,34 +170,20 @@ function updateFighter(
     attacker.facing = defender.x > attacker.x ? 1 : -1;
   }
 
-  const isNeutralState =
-    attacker.state === 'IDLE' ||
-    attacker.state === 'WALK' ||
-    attacker.state === 'WALK_BACK' ||
-    attacker.state === 'BLOCK' ||
-    attacker.state === 'LOW_BLOCK';
+  attacker.animationTime++;
 
-  if (isPlayer && isNeutralState) {
-    if (game.keys['KeyS'] || game.keys['ArrowDown']) {
-      attacker.state = 'LOW_BLOCK';
-    } else if (game.keys['KeyW'] || game.keys['ArrowUp']) {
-      attacker.state = 'BLOCK';
-    } else if (game.keys['KeyA'] || game.keys['ArrowLeft']) {
-      attacker.state = attacker.facing === -1 ? 'WALK' : 'WALK_BACK';
-      attacker.x -= 1.65;
-    } else if (game.keys['KeyD'] || game.keys['ArrowRight']) {
-      attacker.state = attacker.facing === 1 ? 'WALK' : 'WALK_BACK';
-      attacker.x += 1.65;
-    } else {
-      attacker.state = 'IDLE';
-    }
+  if (isPlayer && canAct(attacker)) {
+    handlePlayerMovement(game, attacker);
   }
 
   if (attacker.state === 'DASH') {
     attacker.x += attacker.facing * 3.4;
   }
 
-  attacker.x = Math.max(ARENA.minX, Math.min(ARENA.maxX, attacker.x));
+  attacker.x = Math.max(
+    ARENA.minX,
+    Math.min(ARENA.maxX, attacker.x),
+  );
 
   if (attacker.dashCooldown > 0) {
     attacker.dashCooldown--;
@@ -179,11 +193,58 @@ function updateFighter(
     attacker.timer--;
 
     if (attacker.timer === 0 && attacker.state !== 'KO') {
-      attacker.state = 'IDLE';
+      setState(attacker, 'IDLE');
     }
   }
 
   resolveAttack(game, attacker, defender, isPlayer);
+}
+
+function handlePlayerMovement(
+  game: GameContext,
+  player: Fighter,
+): void {
+  const movingLeft =
+    game.keys['KeyA'] || game.keys['ArrowLeft'];
+
+  const movingRight =
+    game.keys['KeyD'] || game.keys['ArrowRight'];
+
+  if (game.keys['KeyS'] || game.keys['ArrowDown']) {
+    setState(player, 'LOW_BLOCK');
+
+    return;
+  }
+
+  if (game.keys['KeyW'] || game.keys['ArrowUp']) {
+    setState(player, 'BLOCK');
+
+    return;
+  }
+
+  if (movingLeft) {
+    setState(
+      player,
+      player.facing === -1 ? 'WALK' : 'WALK_BACK',
+    );
+
+    player.x -= 1.65;
+
+    return;
+  }
+
+  if (movingRight) {
+    setState(
+      player,
+      player.facing === 1 ? 'WALK' : 'WALK_BACK',
+    );
+
+    player.x += 1.65;
+
+    return;
+  }
+
+  setState(player, 'IDLE');
 }
 
 function resolveAttack(
@@ -192,88 +253,205 @@ function resolveAttack(
   defender: Fighter,
   isPlayer: boolean,
 ): void {
-  const punchActive =
-    attacker.state === 'PUNCH' &&
-    attacker.timer >= 8 &&
-    attacker.timer <= 13;
+  const attack = getAttackType(attacker.state);
 
-  const kickActive =
-    attacker.state === 'KICK' &&
-    attacker.timer >= 11 &&
-    attacker.timer <= 18;
-
-  const lowKickActive =
-    attacker.state === 'LOW_KICK' &&
-    attacker.timer >= 13 &&
-    attacker.timer <= 20;
-
-  const backKickActive =
-    attacker.state === 'BACK_KICK' &&
-    attacker.timer >= 10 &&
-    attacker.timer <= 17;
-
-  if (!punchActive && !kickActive && !lowKickActive && !backKickActive) {
+  if (!attack) {
     return;
   }
 
-  if (attacker.hasHit || defender.state === 'KO') {
+  const data = ATTACK_DATA[attack];
+  const activeStart = data.startup;
+  const activeEnd = data.startup + data.active - 1;
+
+  const isActive =
+    attacker.timer >= activeStart &&
+    attacker.timer <= activeEnd;
+
+  if (!isActive || attacker.hasHit || defender.state === 'KO') {
     return;
   }
 
-  const reach = punchActive ? 38 : kickActive ? 48 : backKickActive ? 50 : 42;
   const distance = (defender.x - attacker.x) * attacker.facing;
 
-  if (distance <= 10 || distance > reach) {
+  if (distance <= 10 || distance > data.reach) {
     return;
   }
 
   attacker.hasHit = true;
 
-  const isLowAttack = lowKickActive;
-  const isBlocked = isLowAttack
-    ? defender.state === 'LOW_BLOCK'
-    : defender.state === 'BLOCK';
-
   const impactX = defender.x - defender.facing * 10;
-  const impactY = isLowAttack ? 158 : 132;
+  const impactY = getImpactY(attack);
 
-  if (isBlocked) {
-    sfx.block();
+  if (isBlocked(defender.state, attack)) {
+    playBlockSound(defender.state);
 
     defender.x += attacker.facing * 6;
     defender.hp = Math.max(1, defender.hp - 2);
 
-    spawnHitSparks(game, impactX, impactY, '#FACC15');
+    spawnHitSparks(
+      game,
+      impactX,
+      impactY,
+      '#FACC15',
+    );
+
     return;
   }
 
-  const damage = punchActive ? 10 : kickActive ? 16 : backKickActive ? 18 : 20;
 
-  sfx.hit();
-  game.screenShake = isLowAttack || backKickActive ? 7 : 5;
+  playHitSound(attack);
+
+  game.screenShake = getScreenShake(attack);
   game.hitFlash = 4;
 
-  defender.hp = Math.max(0, defender.hp - damage);
-  defender.x += attacker.facing * (isLowAttack || backKickActive ? 15 : 12);
+  defender.hp = Math.max(0, defender.hp - data.damage);
+  defender.x += attacker.facing * data.knockback;
   defender.combo = 0;
 
   attacker.combo++;
+
+  const sparkColor =
+    attack === 'LOW_KICK'
+      ? '#FB7185'
+      : attack === 'BACK_KICK'
+        ? '#38BDF8'
+        : '#FDE68A';
 
   spawnHitSparks(
     game,
     impactX,
     impactY,
-    isLowAttack ? '#FB7185' : '#FDE68A',
+    sparkColor,
   );
 
+
+
   if (defender.hp === 0) {
-    defender.state = 'KO';
+    setState(defender, 'KO');
     endRound(game, isPlayer);
+
     return;
   }
 
-  defender.state = 'STUN';
-  defender.timer = isLowAttack ? 18 : 14;
+  setState(defender, 'STUN');
+
+  defender.timer = getStunDuration(attack);
+}
+
+function getAttackType(
+  state: Fighter['state'],
+): AttackType | null {
+  if (
+    state === 'PUNCH' ||
+    state === 'KICK' ||
+    state === 'LOW_KICK' ||
+    state === 'BACK_KICK'
+  ) {
+    return state;
+  }
+
+  return null;
+}
+
+function isBlocked(
+  defenderState: Fighter['state'],
+  attack: AttackType,
+): boolean {
+  if (defenderState === 'BLOCK') {
+    return attack === 'PUNCH' || attack === 'KICK';
+  }
+
+  if (defenderState === 'MID_BLOCK') {
+    return attack === 'KICK' || attack === 'LOW_KICK';
+  }
+
+  if (defenderState === 'LOW_BLOCK') {
+    return attack === 'LOW_KICK' || attack === 'BACK_KICK';
+  }
+
+  return false;
+}
+
+function getImpactY(attack: AttackType): number {
+  if (attack === 'LOW_KICK') {
+    return 158;
+  }
+
+  if (attack === 'BACK_KICK') {
+    return 146;
+  }
+
+  return 132;
+}
+
+function getScreenShake(attack: AttackType): number {
+  if (attack === 'BACK_KICK') {
+    return 8;
+  }
+
+  if (attack === 'LOW_KICK') {
+    return 7;
+  }
+
+  if (attack === 'KICK') {
+    return 6;
+  }
+
+  return 5;
+}
+
+function getStunDuration(attack: AttackType): number {
+  if (attack === 'BACK_KICK') {
+    return 20;
+  }
+
+  if (attack === 'LOW_KICK') {
+    return 18;
+  }
+
+  if (attack === 'KICK') {
+    return 15;
+  }
+
+  return 12;
+}
+
+function playHitSound(attack: AttackType): void {
+  if (attack === 'PUNCH') {
+    sfx.punchHit();
+
+    return;
+  }
+
+  if (attack === 'KICK') {
+    sfx.kickHit();
+
+    return;
+  }
+
+  if (attack === 'LOW_KICK') {
+    sfx.lowHit();
+
+    return;
+  }
+
+  sfx.backHit();
+}
+
+function playBlockSound(state: Fighter['state']): void {
+  if (state === 'MID_BLOCK') {
+    sfx.midBlock();
+
+    return;
+  }
+
+  if (state === 'LOW_BLOCK') {
+    sfx.lowBlock();
+
+    return;
+  }
+
+  sfx.block();
 }
 
 function endRound(game: GameContext, playerWon: boolean): void {
@@ -282,7 +460,7 @@ function endRound(game: GameContext, playerWon: boolean): void {
   if (playerWon) {
     game.playerWins++;
     game.banner = 'YOU WIN THE ROUND!';
-    sfx.win();
+    sfx.roundWin();
   } else {
     game.cpuWins++;
     game.banner = 'CPU WINS THE ROUND!';
@@ -298,6 +476,12 @@ function endRound(game: GameContext, playerWon: boolean): void {
     game.banner = game.playerWins > game.cpuWins
       ? 'MATCH WON! PRESS SPACE TO PLAY AGAIN'
       : 'MATCH LOST! PRESS SPACE TO RETRY';
+
+    if (game.playerWins > game.cpuWins) {
+      sfx.matchWin();
+    } else {
+      sfx.matchLose();
+    }
   }
 }
 
@@ -351,8 +535,10 @@ function render(game: GameContext): void {
   }
 
   drawBackground(context);
-  drawFighter(context, game.cpu, game.tick, false);
-  drawFighter(context, game.player, game.tick, true);
+
+  drawFighter(context, game.cpu, game);
+  drawFighter(context, game.player, game);
+
   drawParticles(game);
   drawHUD(game);
 

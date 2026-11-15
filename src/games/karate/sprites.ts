@@ -1,76 +1,217 @@
 import fighterSheetUrl from './assets/fighter.png';
 
-export interface SpriteSheetSet {
-  player: HTMLCanvasElement;
-  cpu: HTMLCanvasElement;
-  frameWidth: number;
-  frameHeight: number;
-  frameCount: number;
-}
+import type {
+  SpriteAnimation,
+  SpriteSheetSet,
+} from './types';
 
 const TOTAL_FRAMES = 13;
+
+const PLAYER_GI_COLOR = {
+  red: 247,
+  green: 247,
+  blue: 242,
+};
+
+const CPU_GI_COLOR = {
+  red: 56,
+  green: 189,
+  blue: 248,
+};
+
 let cachedSheets: SpriteSheetSet | null = null;
+let loadingPromise: Promise<SpriteSheetSet> | null = null;
 
-export function loadFighterSprites(): void {
-  if (cachedSheets) return;
+export function loadFighterSprites(
+  animations: Record<string, SpriteAnimation>,
+): Promise<SpriteSheetSet> {
+  if (cachedSheets) {
+    return Promise.resolve(cachedSheets);
+  }
 
-  const img = new Image();
-  // В Astro импорт PNG возвращает либо строку URL, либо объект { src: string }
-  img.src = typeof fighterSheetUrl === 'string' ? fighterSheetUrl : fighterSheetUrl.src;
+  if (loadingPromise) {
+    return loadingPromise;
+  }
 
-  img.onerror = () => {
-    console.error('[Karate] Failed to load sprite sheet at:', img.src);
-  };
+  loadingPromise = createSpriteSheets(animations)
+    .then((sheets) => {
+      cachedSheets = sheets;
 
-  img.onload = () => {
-    const playerCanvas = document.createElement('canvas');
-    playerCanvas.width = img.width;
-    playerCanvas.height = img.height;
-    const pCtx = playerCanvas.getContext('2d');
-    if (!pCtx) return;
+      return sheets;
+    })
+    .finally(() => {
+      loadingPromise = null;
+    });
 
-    pCtx.drawImage(img, 0, 0);
-    const imgData = pCtx.getImageData(0, 0, playerCanvas.width, playerCanvas.height);
-    const data = imgData.data;
-
-    // Убираем чистый белый фон, если он остался при экспорте
-    for (let i = 0; i < data.length; i += 4) {
-      if (data[i] > 248 && data[i + 1] > 248 && data[i + 2] > 248) {
-        data[i + 3] = 0;
-      }
-    }
-    pCtx.putImageData(imgData, 0, 0);
-
-    // Делаем копию с синим кимоно (#38BDF8) для противника
-    const cpuCanvas = document.createElement('canvas');
-    cpuCanvas.width = img.width;
-    cpuCanvas.height = img.height;
-    const cCtx = cpuCanvas.getContext('2d');
-    if (!cCtx) return;
-
-    cCtx.drawImage(playerCanvas, 0, 0);
-    const cpuData = cCtx.getImageData(0, 0, cpuCanvas.width, cpuCanvas.height);
-    const cData = cpuData.data;
-
-    for (let i = 0; i < cData.length; i += 4) {
-      if (cData[i + 3] > 0 && cData[i] > 195 && cData[i + 1] > 195 && cData[i + 2] > 195) {
-        cData[i] = 56;
-        cData[i + 1] = 189;
-        cData[i + 2] = 248;
-      }
-    }
-    cCtx.putImageData(cpuData, 0, 0);
-
-    cachedSheets = {
-      player: playerCanvas,
-      cpu: cpuCanvas,
-      frameWidth: Math.floor(img.width / TOTAL_FRAMES),
-      frameHeight: img.height,
-      frameCount: TOTAL_FRAMES,
-    };
-  };
+  return loadingPromise;
 }
 
 export function getFighterSprites(): SpriteSheetSet | null {
   return cachedSheets;
+}
+
+async function createSpriteSheets(
+  animations: Record<string, SpriteAnimation>,
+): Promise<SpriteSheetSet> {
+  const image = await loadImage(
+    resolveAssetUrl(fighterSheetUrl),
+  );
+
+  const playerCanvas = createCanvasFromImage(image);
+  const cpuCanvas = recolorGi(
+    playerCanvas,
+    PLAYER_GI_COLOR,
+    CPU_GI_COLOR,
+  );
+
+  return {
+    player: playerCanvas,
+    cpu: cpuCanvas,
+    frameWidth: Math.floor(image.width / TOTAL_FRAMES),
+    frameHeight: image.height,
+    frameCount: TOTAL_FRAMES,
+    animations,
+  };
+}
+
+function resolveAssetUrl(
+  asset: string | { src: string },
+): string {
+  return typeof asset === 'string'
+    ? asset
+    : asset.src;
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => resolve(image);
+    image.onerror = () => {
+      reject(new Error(`Unable to load sprite sheet: ${src}`));
+    };
+
+    image.src = src;
+  });
+}
+
+function createCanvasFromImage(
+  image: HTMLImageElement,
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  const context = get2DContext(canvas);
+
+  context.drawImage(image, 0, 0);
+
+  return canvas;
+}
+
+function recolorGi(
+  source: HTMLCanvasElement,
+  from: { red: number; green: number; blue: number },
+  to: { red: number; green: number; blue: number },
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+
+  canvas.width = source.width;
+  canvas.height = source.height;
+
+  const context = get2DContext(canvas);
+
+  context.drawImage(source, 0, 0);
+
+  const imageData = context.getImageData(
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+
+  const data = imageData.data;
+
+  for (let index = 0; index < data.length; index += 4) {
+    const alpha = data[index + 3];
+
+    if (alpha === 0) {
+      continue;
+    }
+
+    if (
+      data[index] === from.red &&
+      data[index + 1] === from.green &&
+      data[index + 2] === from.blue
+    ) {
+      data[index] = to.red;
+      data[index + 1] = to.green;
+      data[index + 2] = to.blue;
+    }
+  }
+
+  context.putImageData(imageData, 0, 0);
+
+  return canvas;
+}
+
+function get2DContext(
+  canvas: HTMLCanvasElement,
+): CanvasRenderingContext2D {
+  const context = canvas.getContext('2d', {
+    willReadFrequently: true,
+  });
+
+  if (!context) {
+    throw new Error('Canvas 2D context is not supported.');
+  }
+
+  return context;
+}
+
+export function drawSpriteFrame(
+  context: CanvasRenderingContext2D,
+  sheet: HTMLCanvasElement,
+  frameWidth: number,
+  frameHeight: number,
+  animation: SpriteAnimation,
+  animationTime: number,
+  destinationX: number,
+  destinationY: number,
+  facing: 1 | -1,
+): void {
+  const frameCount = animation.frames.length;
+
+  const frameIndex = animation.loop
+    ? Math.floor(animationTime / animation.frameDuration) % frameCount
+    : Math.min(
+        Math.floor(animationTime / animation.frameDuration),
+        frameCount - 1,
+      );
+
+  const frame = animation.frames[frameIndex];
+  const sourceX = frame * frameWidth;
+
+  context.save();
+  context.translate(
+    Math.round(destinationX),
+    Math.round(destinationY),
+  );
+
+  context.scale(facing, 1);
+
+  context.drawImage(
+    sheet,
+    sourceX,
+    0,
+    frameWidth,
+    frameHeight,
+    -Math.floor(frameWidth / 2),
+    -frameHeight,
+    frameWidth,
+    frameHeight,
+  );
+
+  context.restore();
 }
