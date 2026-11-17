@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Aleksandr Zhdanov</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">MLOps &amp; Infrastructure Engineer</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/#projects" class="hover:text-slate-100 transition-colors">/projects</a> <a href="/mlops-portfolio/notes" class="hover:text-brand-accent transition-colors">/notes</a> <a href="/mlops-portfolio/#services" class="hover:text-slate-100 transition-colors">/services</a> <a href="/mlops-portfolio/about" class="hover:text-brand-accent transition-colors">/about</a> <a href="/mlops-portfolio/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/asl-recognition/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/asl-recognition/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="cicd-model-benchmarking-pipeline-asl-gesture-recognition">CI/CD Model Benchmarking Pipeline: ASL Gesture Recognition</h1>
+<h3 id="️-infrastructure--model-evolution-overview">🛠️ Infrastructure &#x26; Model Evolution Overview</h3>
+<p>A production-oriented automation workflow built to enforce strict <strong>Quality Gates</strong> on computer vision model deployments within a ROS 2 robotic swarm context. The core ecosystem handles automated dataset conversion, multi-pass bounding-box generation fallbacks, and real-time model benchmarking across held-out webcam data streams to isolate and measure domain gaps before deployment.</p>
+<ul>
+<li><strong>Source Code Repository:</strong> <a href="https://github.com/ajdanoff/asl-gesture-recognition">asl-gesture-recognition</a></li>
+<li><strong>Active Pipeline Run:</strong> <a href="https://github.com/ajdanoff/asl-gesture-recognition/actions/runs/42774090717">GitHub Actions Run #42774090717</a></li>
+<li><strong>Core Pipeline Execution Metric:</strong> <code>Succeeded in 2m 6s</code></li>
+</ul>
+<hr>
+<h2 id="️-architecture--specialist-model-evolution">🏗️ Architecture &#x26; Specialist Model Evolution</h2>
+<p>To reduce visual confusion between motion-critical execution characters and similar digits, the architecture was intentionally transitioned from a single unified network into specialized, discrete detectors.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>                                [ Входящий Снимок / Видеокадр ]</span></span>
+<span class="line"><span>                                               │</span></span>
+<span class="line"><span>                       ┌───────────────────────┴───────────────────────┐</span></span>
+<span class="line"><span>                       ▼                                               ▼</span></span>
+<span class="line"><span>         [ Specialist Digit Detector ]                   [ Specialist Letter Detector ]</span></span>
+<span class="line"><span>         ├── 10 Classes (0-9)                            ├── 26 Classes (A-Z)</span></span>
+<span class="line"><span>         ├── Input: 512×512, AdamW                       ├── Input: 512×512, AdamW</span></span>
+<span class="line"><span>         └── mAP@0.50: 0.990                             └── mAP@0.50: 0.986</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="1-the-validation-matrix--improvements">1. The Validation Matrix &#x26; Improvements</h3>
+<p>Separating the tasks into independent specialist detectors yielded distinct performance improvements over the baseline unified 36-class architecture:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Model Architecture</th>
+<th align="left">Evaluated Class Split</th>
+<th align="center">Precision</th>
+<th align="center">Recall</th>
+<th align="center">mAP@0.50</th>
+<th align="center">mAP@0.50:0.95</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Unified YOLO11n MP</strong></td>
+<td align="left">Full Set (36 classes)</td>
+<td align="center">0.942</td>
+<td align="center">0.940</td>
+<td align="center">0.961</td>
+<td align="center">0.911</td>
+</tr>
+<tr>
+<td align="left"><strong>Specialist Digits (YOLO11n)</strong></td>
+<td align="left">Digits Only (0-9)</td>
+<td align="center"><strong>0.989</strong></td>
+<td align="center"><strong>0.982</strong></td>
+<td align="center"><strong>0.990</strong></td>
+<td align="center"><strong>0.933</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>Specialist Letters (YOLO11n)</strong></td>
+<td align="left">Letters Only (A-Z)</td>
+<td align="center"><strong>0.976</strong></td>
+<td align="center"><strong>0.964</strong></td>
+<td align="center"><strong>0.986</strong></td>
+<td align="center">0.903</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-multi-pass-dataset-conversion-pipeline">2. Multi-Pass Dataset Conversion Pipeline</h3>
+<p>To construct reliable datasets out of heterogeneous Kaggle and custom webcam sources, a robust two-pass pipeline was designed:</p>
+<ul>
+<li><strong>Primary Pass:</strong> Extracts hand coordinates using <code>MediaPipe HandLandmarker</code> to construct high-accuracy bounding boxes.</li>
+<li><strong>Secondary Pass (YOLO Fallback):</strong> Integrates a class-matched YOLO model wrapper to provide bounding boxes when MediaPipe markers fail.</li>
+<li><strong>Tertiary Pass (Normalized Centered Fallback):</strong> Calculates image-size-aware bounding box center statistics and injects a custom normalized expansion margin to avoid overly restricted regions of interest.</li>
+</ul>
+<hr>
+<h2 id="-cross-model-mlops-evaluation-framework">🚀 Cross-Model MLOps Evaluation Framework</h2>
+<p>Standard YOLO metric tools break down when evaluating specialized models because narrowing the class boundaries (e.g., dropping letters to keep only digits 0–9) alters the underlying class-index mappings.</p>
+<p>To bridge this gap and establish reproducible integration testing, I built a custom <strong>symbol-based matching evaluation engine</strong> inside the pytest verification suite.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>[Ground Truth Class Index] ──► Map to Character Symbol (e.g., 'A')</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>                        [ Run Inference Evaluation ]</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>[Model Predicted Index]    ──► Map back via Model's Internal Names Map</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>                      Verify: Symbols Match &#x26;&#x26; IoU >= 0.45</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="held-out-webcam-benchmarking--domain-gap-analysis">Held-Out Webcam Benchmarking &#x26; Domain Gap Analysis</h3>
+<p>Every automated build evaluates model weights against two severe, completely out-of-distribution external datasets published as release assets:</p>
+<ol>
+<li><strong>ASL Webcam Benchmark — Original (36 Images):</strong> Serves as a baseline smoke test using one raw real-world frame per class.</li>
+<li><strong>ASL Webcam Benchmark — Augmented (216 Images):</strong> Applies 5 aggressive deterministic computer vision mutations per class (including rotations, translations, horizontal flips, gamma shifts, and Gaussian noise) to map systemic model failure points.</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>               [ Shared Webcam Benchmark Recall Metrics ]</span></span>
+<span class="line"><span>┌───────────────────────────────┬───────────────────────────────┐</span></span>
+<span class="line"><span>│ Original Benchmark            │ Augmented Benchmark           │</span></span>
+<span class="line"><span>├───────────────────────────────┼───────────────────────────────┤</span></span>
+<span class="line"><span>│ Unified Model:  44.44%        │ Unified Model:  24.07%        │</span></span>
+<span class="line"><span>│ Digit Model:    60.00%        │ Digit Model:    46.67%        │</span></span>
+<span class="line"><span>│ Letter Model:   38.46%        │ Letter Model:   30.13%        │</span></span>
+<span class="line"><span>└───────────────────────────────┴───────────────────────────────┘</span></span>
+<span class="line"><span></span></span></code></pre>
+<p><strong>Diagnostic Finding:</strong> The performance discrepancy reveals a clear domain gap between laboratory training datasets and raw webcam streams. Classes such as <code>C</code>, <code>G</code>, <code>M</code>, and <code>U</code> drop performance significantly under specific spatial flips and lighting distortions, pointing to exact data augmentation targets required before deploying firmware onto the live robotic platforms.</p>
+<hr>
+<h2 id="️-automated-cicd-quality-gate-configuration">⚙️ Automated CI/CD Quality Gate Configuration</h2>
+<p>The automated pipeline executes via GitHub Actions on every pull request, handling model validation scripts, runtime dependency isolation, and regression verification checks inside a strict execution window.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run ASL webcam benchmark</span></span>
+<span class="line"><span style="color:#79B8FF">on</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  push</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [ </span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">master</span><span style="color:#E1E4E8"> ]</span></span>
+<span class="line"><span style="color:#85E89D">  pull_request</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    branches</span><span style="color:#E1E4E8">: [ </span><span style="color:#9ECBFF">main</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">master</span><span style="color:#E1E4E8"> ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">jobs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  benchmark</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    runs-on</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ubuntu-latest</span></span>
+<span class="line"><span style="color:#85E89D">    steps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Checkout Code</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/checkout@v4</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Setup Python Context</span></span>
+<span class="line"><span style="color:#85E89D">        uses</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">actions/setup-python@v5</span></span>
+<span class="line"><span style="color:#85E89D">        with</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">          python-version</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'3.10'</span></span>
+<span class="line"><span style="color:#85E89D">          cache</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'pip'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install Runtime Stack</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          pip install -r requirements.txt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Run Cross-Model Symbol Benchmark Tests</span></span>
+<span class="line"><span style="color:#85E89D">        run</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          python -m pytest tests/ -v --color=yes</span></span>
+<span class="line"></span></code></pre>
+<hr>
+<h2 id="-key-production-takeaways">📈 Key Production Takeaways</h2>
+<ul>
+<li><strong>Specialization Validated:</strong> Isolating digits into a dedicated network achieved an absolute increase of <strong>+4.7% in Precision</strong> and <strong>+4.2% in Recall</strong> on the validation set, validating the platform’s multi-model architectural design.</li>
+<li><strong>Fail-Fast Enforcement:</strong> If an engineer alters a hyperparameter or pushes weights that result in missing critical motion commands (such as the directional instructions <code>A</code>, <code>B</code>, <code>F</code>, <code>L</code>, <code>R</code>), the symbol-based validation suite halts the build and prevents deployment.</li>
+<li><strong>Resource Optimization:</strong> The entire sequence—including dependency layer compilation, weight parsing, and evaluating 216 augmented images via pytest—completes within an optimized processing window of <strong>2 minutes 6 seconds</strong>.</li>
+</ul> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

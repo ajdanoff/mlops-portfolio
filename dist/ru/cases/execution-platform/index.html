@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="ru" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Александр Жданов</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/ru/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">Инженер MLOps и ML-инфраструктуры</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/ru/#projects" class="hover:text-slate-100 transition-colors">/проекты</a> <a href="/mlops-portfolio/ru/notes" class="hover:text-brand-accent transition-colors">/заметки</a> <a href="/mlops-portfolio/ru/#services" class="hover:text-slate-100 transition-colors">/услуги</a> <a href="/mlops-portfolio/ru/about" class="hover:text-brand-accent transition-colors">/обо-мне</a> <a href="/mlops-portfolio/ru/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/execution-platform/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/execution-platform/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="распределённая-платформа-исполнения-ml-нагрузок">Распределённая платформа исполнения ML-нагрузок</h1>
+<h3 id="️-обзор-инфраструктуры">🛠️ Обзор инфраструктуры</h3>
+<p>Асинхронная система исполнения долгих и ресурсоёмких задач машинного обучения (обучение/инференс YOLOv8 и мультимодальных моделей Qwen2.5-VL) без блокировки клиентского API. Архитектура разделяет приём HTTP-запросов, постановку задач в очереди и вычисления на GPU-воркерах с оптимизацией видеопамяти.</p>
+<ul>
+<li><strong>Репозиторий исходного кода:</strong> <a href="https://github.com/ajdanoff/ml-workload-execution-platform">ml-workload-execution-platform</a></li>
+<li><strong>Ключевой стек:</strong> FastAPI // RabbitMQ // Celery // vLLM // AWQ и 4-bit NF4 квантование // Pydantic v2</li>
+</ul>
+<hr>
+<h2 id="️-асинхронная-маршрутизация-задач-и-архитектура-брокера">🏗️ Асинхронная маршрутизация задач и архитектура брокера</h2>
+<p>Платформа устраняет классическую уязвимость Python ASGI-сервисов, при которой тяжёлые матричные вычисления выполняются в потоке HTTP-сервера и блокируют <code>asyncio</code> Event Loop.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>[ HTTP POST запрос ] ──► FastAPI Router</span></span>
+<span class="line"><span>                             │</span></span>
+<span class="line"><span>                             ▼ (Мгновенный ответ 202 Accepted + task_id)</span></span>
+<span class="line"><span>                      [ RabbitMQ Exchange ]</span></span>
+<span class="line"><span>                             │</span></span>
+<span class="line"><span>            ┌────────────────┴────────────────┐</span></span>
+<span class="line"><span>            ▼ (Routing Key: workloads.heavy)   ▼ (Routing Key: workloads.light)</span></span>
+<span class="line"><span>     [ Очередь GPU-задач ]            [ Очередь CPU-задач ]</span></span>
+<span class="line"><span>            │                                 │</span></span>
+<span class="line"><span>            ▼                                 ▼</span></span>
+<span class="line"><span>┌──────────────────────────────┐   ┌──────────────────────────────┐</span></span>
+<span class="line"><span>│ Изолированный Celery GPU     │   │ Изолированный Celery CPU     │</span></span>
+<span class="line"><span>│ └── vLLM Server (Qwen2.5-VL) │   │ └── Аудит данных и метрик    │</span></span>
+<span class="line"><span>└──────────────────────────────┘   └──────────────────────────────┘</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="1-жизненный-цикл-долгих-операций-long-running-operations">1. Жизненный цикл долгих операций (Long-Running Operations)</h3>
+<ul>
+<li><strong>Валидация контракта:</strong> при поступлении запроса <code>POST /api/v1/workload/run</code> схема данных мгновенно проверяется через <strong>Pydantic v2</strong> до постановки в очередь.</li>
+<li><strong>Неблокирующий ответ:</strong> API публикует сообщение в <strong>RabbitMQ</strong>, возвращает клиенту <code>202 Accepted</code> с уникальным <code>task_id</code>, а изолированные воркеры <strong>Celery</strong> забирают задачу по мере освобождения GPU.</li>
+</ul>
+<h3 id="2-защита-от-дублирования-идемпотентность">2. Защита от дублирования (Идемпотентность)</h3>
+<p>Для предотвращения повторного запуска дорогих GPU-задач при сетевых ретраях клиента реализована проверка ключа идемпотентности (<code>X-Idempotency-Key</code>) через атомарные блокировки в in-memory хранилище: конкурентные дубликаты отклоняются со статусом <code>409 Conflict</code>.</p>
+<hr>
+<h2 id="-оптимизация-видеопамяти-инференс-7b-vlm-в-16-гб-vram">💾 Оптимизация видеопамяти: инференс 7B VLM в 16 ГБ VRAM</h2>
+<p>Запуск <strong>Qwen2.5-VL-7B-Instruct</strong> в нативной точности FP16 требует ~15–16 ГБ VRAM только под веса модели. Для стабильной работы на видеокартах уровня NVIDIA T4 (16 ГБ) реализована следующая конфигурация:</p>
+<ul>
+<li><strong>vLLM Runtime:</strong> использование PagedAttention для устранения фрагментации памяти KV-кэша.</li>
+<li><strong>Квантование AWQ (Activation-Aware Weight Quantization):</strong> сжатие весов до 4 бит с защитой критически важных каналов активаций уменьшает объём модели в <strong>~3.5 раза</strong> (~4.5–5 ГБ), оставляя запас памяти под визуальные эмбеддинги и батчинг без потерь точности координат bounding boxes.</li>
+</ul>
+<hr>
+<h2 id="️-четырёхуровневая-матрица-качества-quality-gates">🛡️ Четырёхуровневая матрица качества (Quality Gates)</h2>
+<ol>
+<li><strong>Fast CI:</strong> изолированные контрактные тесты схем Pydantic и граничных значений в рамках каждого PR.</li>
+<li><strong>Nightly Integration:</strong> поднятие связки <strong>FastAPI + PostgreSQL + RabbitMQ</strong> в Docker Compose и проверка сквозного прохождения задач.</li>
+<li><strong>Fault Injection:</strong> эмуляция падения воркеров, обрыва связи с БД и брокером с проверкой маршрутизации сбойных задач в Dead Letter Queue (DLQ).</li>
+<li><strong>Performance Gates:</strong> нагрузочное тестирование и контроль процентилей <code>p95</code>/<code>p99</code> latency перед релизом.</li>
+</ol> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 АЛЕКСАНДР ЖДАНОВ // САНКТ-ПЕТЕРБУРГ</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

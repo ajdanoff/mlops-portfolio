@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="ru" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Александр Жданов</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/ru/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">Инженер MLOps и ML-инфраструктуры</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/ru/#projects" class="hover:text-slate-100 transition-colors">/проекты</a> <a href="/mlops-portfolio/ru/notes" class="hover:text-brand-accent transition-colors">/заметки</a> <a href="/mlops-portfolio/ru/#services" class="hover:text-slate-100 transition-colors">/услуги</a> <a href="/mlops-portfolio/ru/about" class="hover:text-brand-accent transition-colors">/обо-мне</a> <a href="/mlops-portfolio/ru/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/asl-recognition/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/asl-recognition/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="cicd-пайплайн-бенчмаркинга-моделей-распознавание-жестов-asl">CI/CD-пайплайн бенчмаркинга моделей: распознавание жестов ASL</h1>
+<h3 id="️-обзор-инфраструктуры-и-эволюции-моделей">🛠️ Обзор инфраструктуры и эволюции моделей</h3>
+<p>Продакшен-ориентированный контур автоматизации для обеспечения строгих <strong>Quality Gates</strong> при выкатке моделей компьютерного зрения в составе роевой робототехнической системы ROS 2. Пайплайн автоматически конвертирует датасеты, применяет многопроходную генерацию ограничивающих рамок (bounding boxes) и запускает кросс-модельный бенчмаркинг на отложенных (held-out) веб-кам наборах данных для выявления domain gap до деплоя.</p>
+<ul>
+<li><strong>Репозиторий исходного кода:</strong> <a href="https://github.com/ajdanoff/asl-gesture-recognition">asl-gesture-recognition</a></li>
+<li><strong>Активный запуск пайплайна:</strong> <a href="https://github.com/ajdanoff/asl-gesture-recognition/actions/runs/42774090717">GitHub Actions Run #42774090717</a></li>
+<li><strong>Время выполнения CI-проверки:</strong> <code>Успешно за 2 мин 6 сек</code></li>
+</ul>
+<hr>
+<h2 id="️-архитектура-и-разделение-на-специализированные-детекторы">🏗️ Архитектура и разделение на специализированные детекторы</h2>
+<p>Чтобы устранить визуальную путаницу между управляющими буквами и схожими по форме цифрами, единая 36-классовая сеть была разделена на два специализированных детектора:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>                                [ Входящий снимок / видеокадр ]</span></span>
+<span class="line"><span>                                               │</span></span>
+<span class="line"><span>                       ┌───────────────────────┴───────────────────────┐</span></span>
+<span class="line"><span>                       ▼                                               ▼</span></span>
+<span class="line"><span>         [ Specialist Digit Detector ]                   [ Specialist Letter Detector ]</span></span>
+<span class="line"><span>         ├── 10 классов (0–9)                            ├── 26 классов (A–Z)</span></span>
+<span class="line"><span>         ├── Вход: 512×512, AdamW                        ├── Вход: 512×512, AdamW</span></span>
+<span class="line"><span>         └── mAP@0.50: 0.990                             └── mAP@0.50: 0.986</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="1-матрица-валидации-и-прирост-метрик">1. Матрица валидации и прирост метрик</h3>
+<p>Выделение цифр и букв в независимые модели дало заметный прирост точности и полноты на валидационной выборке:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Архитектура модели</th>
+<th align="left">Оцениваемый домен</th>
+<th align="center">Precision</th>
+<th align="center">Recall</th>
+<th align="center">mAP@0.50</th>
+<th align="center">mAP@0.50:0.95</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Unified YOLO11n MP</strong></td>
+<td align="left">Все классы (36 классов)</td>
+<td align="center">0.942</td>
+<td align="center">0.940</td>
+<td align="center">0.961</td>
+<td align="center">0.911</td>
+</tr>
+<tr>
+<td align="left"><strong>Specialist Digits (YOLO11n)</strong></td>
+<td align="left">Только цифры (0–9)</td>
+<td align="center"><strong>0.989</strong></td>
+<td align="center"><strong>0.982</strong></td>
+<td align="center"><strong>0.990</strong></td>
+<td align="center"><strong>0.933</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>Specialist Letters (YOLO11n)</strong></td>
+<td align="left">Только буквы (A–Z)</td>
+<td align="center"><strong>0.976</strong></td>
+<td align="center"><strong>0.964</strong></td>
+<td align="center"><strong>0.986</strong></td>
+<td align="center"><strong>0.903</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-многопроходный-конвейер-разметки-датасетов">2. Многопроходный конвейер разметки датасетов</h3>
+<p>Для формирования чистых YOLO-аннотаций из разнородных источников (Kaggle и веб-камера) реализован трёхэтапный fallback-алгоритм:</p>
+<ul>
+<li><strong>Первый проход:</strong> извлечение координат кисти через <code>MediaPipe HandLandmarker</code>.</li>
+<li><strong>Второй проход (YOLO Fallback):</strong> использование вспомогательного YOLO-детектора при сбое MediaPipe.</li>
+<li><strong>Третий проход (Centered Fallback):</strong> расчёт нормированных рамок на основе статистики размеров класса.</li>
+</ul>
+<hr>
+<h2 id="-кросс-модельный-фреймворк-оценки-в-cicd">🚀 Кросс-модельный фреймворк оценки в CI/CD</h2>
+<p>Стандартные утилиты оценки YOLO ломаются при сравнении специализированных моделей с объединённой, так как сужение списка классов сдвигает внутренние индексы (<code>class_id</code>). Для решения этой проблемы в <code>pytest</code> реализован <strong>движок сопоставления по ASCII-символам</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>[Ground Truth Class Index] ──► Перевод в символ (например, 'A')</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>                        [ Запуск инференса модели ]</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>[Model Predicted Index]    ──► Перевод через словарь names модели</span></span>
+<span class="line"><span>                                      │</span></span>
+<span class="line"><span>                                      ▼</span></span>
+<span class="line"><span>                   Проверка: Символы совпадают &#x26;&#x26; IoU >= 0.45</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="held-out-веб-кам-бенчмарки-и-анализ-domain-gap">Held-out веб-кам бенчмарки и анализ Domain Gap</h3>
+<p>Каждый коммит автоматически тестируется на двух независимых датасетах, опубликованных на Hugging Face:</p>
+<ol>
+<li><strong><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-original">ASL Webcam Benchmark — Original</a> (36 кадров):</strong> базовый smoke-тест (1 реальный кадр на класс + фоновые кадры без рук).</li>
+<li><strong><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-augmented">ASL Webcam Benchmark — Augmented</a> (216 кадров):</strong> стресс-тест с 5 детерминированными мутациями на каждый кадр (кропы, повороты, зеркальные отражения, сдвиги гаммы/HSV, размытие и шум).</li>
+</ol>
+<ul>
+<li><strong>Результат:</strong> специализированный детектор цифр показал максимальную устойчивость (<code>60.00%</code> recall на оригинале и <code>41.67%</code> на аугментированном наборе при <code>0</code> ложных срабатываний на фоне), тогда как анализ ошибок выявил чувствительность хиральных жестов к горизонтальному отражению.</li>
+</ul> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 АЛЕКСАНДР ЖДАНОВ // САНКТ-ПЕТЕРБУРГ</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

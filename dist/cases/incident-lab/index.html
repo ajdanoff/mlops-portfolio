@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Aleksandr Zhdanov</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">MLOps &amp; Infrastructure Engineer</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/#projects" class="hover:text-slate-100 transition-colors">/projects</a> <a href="/mlops-portfolio/notes" class="hover:text-brand-accent transition-colors">/notes</a> <a href="/mlops-portfolio/#services" class="hover:text-slate-100 transition-colors">/services</a> <a href="/mlops-portfolio/about" class="hover:text-brand-accent transition-colors">/about</a> <a href="/mlops-portfolio/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/incident-lab/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/incident-lab/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="kubernetes-fault-injection--observability-laboratory">Kubernetes Fault-Injection &#x26; Observability Laboratory</h1>
+<h3 id="️-infrastructure-overview">🛠️ Infrastructure Overview</h3>
+<p>An advanced simulation environment designed to systematically replicate high-load infrastructure bottlenecks, resource starvation, and cascading failure patterns in containerized microservice architectures. This project functions as an automated staging environment where target services are subjected to artificial congestion patterns to test and refine Prometheus metrics alerts, Grafana dashboard configurations, and system stability under stress.</p>
+<ul>
+<li><strong>Source Code Repository:</strong> <a href="https://github.com/ajdanoff/incident-lab">incident-lab</a></li>
+<li><strong>Primary Tech Stack:</strong> Kubernetes (cgroups) // Prometheus v2 // Grafana // k6 Load Testing // Python ASGI</li>
+</ul>
+<hr>
+<h2 id="️-replicated-failure-modes--diagnostic-metrics">🏗️ Replicated Failure Modes &#x26; Diagnostic Metrics</h2>
+<p>The laboratory isolates and analyzes the distinct signature patterns of modern cloud infrastructure failures, providing specific remediation insights for each mode:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>               [ Искусственная Нагрузка / Burst Traffic ]</span></span>
+<span class="line"><span>                                   │</span></span>
+<span class="line"><span>         ┌─────────────────────────┴─────────────────────────┐</span></span>
+<span class="line"><span>         ▼                                                   ▼</span></span>
+<span class="line"><span>[ Сценарий А: CPU Throttling ]             [ Сценарий Б: Reconnect Storm ]</span></span>
+<span class="line"><span>├── cgroups CFS Period: 100ms              ├── Target API Gateway Timeouts</span></span>
+<span class="line"><span>├── Симптом: Лавинообразный p95            ├── Симптом: Рост HTTP 5xx &#x26; Retries</span></span>
+<span class="line"><span>└── Метрика: `container_cpu_cfs...`        └── Метрика: `api_inflight_requests`</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="1-the-kubernetes-cpu-throttling-illusion">1. The Kubernetes CPU Throttling Illusion</h3>
+<ul>
+<li><strong>The Trap:</strong> Standard monitoring metrics often display a normal, healthy average CPU utilization (e.g., 65%), while the application simultaneously experiences a massive surge in <strong>p95/p99 latency response times</strong>.</li>
+<li><strong>The Infrastructure Root Cause:</strong> The Kubernetes Completely Fair Scheduler (CFS) enforces CPU resource limits inside micro-windows of <strong>100ms</strong> periods. If a heavy ML pre-processing worker or a heavy serialization parser burns through its total allotted CPU quota within the first 20ms of a window, <code>cgroups</code> freezes (throttles) the container threads for the remaining 80ms. While the average utilization over a 1-minute period appears normal, actual execution paths are heavily paralyzed.</li>
+<li><strong>Target Core Verification Metrics:</strong>
+<ul>
+<li><code>container_cpu_cfs_throttled_periods_total</code> divided by <code>container_cpu_cfs_periods_total</code> — extracts the precise percentage of execution windows spent under strict kernel freeze.</li>
+<li><code>container_cpu_cfs_throttled_seconds_total</code> — logs the raw duration of induced runtime latency.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-cascading-timeouts--reconnect-storms">2. Cascading Timeouts &#x26; Reconnect Storms</h3>
+<ul>
+<li><strong>The Trap:</strong> A minor degradation in a single downstream data validator escalates into a platform-wide outage affecting the primary API Gateway layer.</li>
+<li><strong>The Infrastructure Root Cause:</strong> When downstream processing bottlenecks increase execution time past configured gateway limits, connection buffers begin stacking up. Client clients or worker nodes initiate automated, aggressive retry loops (<code>retries</code>), creating a massive burst of traffic that exhausts the available connection pool of both database clusters and internal event brokers.</li>
+<li><strong>Target Core Verification Metrics:</strong>
+<ul>
+<li><code>api_inflight_requests</code> — registers connection pool saturation metrics.</li>
+<li><code>http_requests_total{status=~"5.."}</code> mapped against connection retry frequencies to track the explosion of automated reconnection attempts.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-automated-reliability--chaos-engineering-setup">🚀 Automated Reliability &#x26; Chaos Engineering Setup</h2>
+<p>The configuration matrix defines strict resource allocation limits coupled with isolated Prometheus scraper frequencies, ensuring load simulators capture highly volatile system events before metrics are smoothed out over time:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#6A737D"># Engineering blueprint from the laboratory manifest</span></span>
+<span class="line"><span style="color:#85E89D">apiVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">apps/v1</span></span>
+<span class="line"><span style="color:#85E89D">kind</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Deployment</span></span>
+<span class="line"><span style="color:#85E89D">metadata</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">target-inference-service</span></span>
+<span class="line"><span style="color:#85E89D">  namespace</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">incident-lab</span></span>
+<span class="line"><span style="color:#85E89D">spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  replicas</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#85E89D">  template</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    spec</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      containers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">inference-api</span></span>
+<span class="line"><span style="color:#85E89D">          image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ajdanoff/inference-api:latest</span></span>
+<span class="line"><span style="color:#85E89D">          resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            requests</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"500m"</span></span>
+<span class="line"><span style="color:#85E89D">              memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1Gi"</span></span>
+<span class="line"><span style="color:#85E89D">            limits</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              cpu</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1000m"</span><span style="color:#6A737D"> # Strict cgroups allocation to force throttling verification</span></span>
+<span class="line"><span style="color:#85E89D">              memory</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2Gi"</span></span>
+<span class="line"><span style="color:#85E89D">          ports</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            - </span><span style="color:#85E89D">containerPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8000</span></span>
+<span class="line"><span style="color:#85E89D">          readinessProbe</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">            httpGet</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">              path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/healthz</span></span>
+<span class="line"><span style="color:#85E89D">              port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8000</span></span>
+<span class="line"><span style="color:#85E89D">            initialDelaySeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#85E89D">            periodSeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#6A737D"> # Highly aggressive checking to catch connection failures early</span></span>
+<span class="line"></span></code></pre>
+<hr>
+<h2 id="-key-production--triage-takeaways">📈 Key Production &#x26; Triage Takeaways</h2>
+<ul>
+<li><strong>Actionable SLA Optimization:</strong> Proved that relying strictly on average CPU metrics causes a critical failure visibility gap. Teams must set core infrastructure alerts on <strong>CFS Throttled Periods</strong> and track p99 latencies against short, granular intervals.</li>
+<li><strong>Fail-Safe Architecture Validation:</strong> Demonstrated that preventing cascading failures requires implementing hard circuit-breakers and backoff retry algorithms at the client layer, blocking the system from triggering an organic, self-induced DDoS attack during database slowdowns.</li>
+<li><strong>Reproducible Staging Playground:</strong> Enables platform engineers to safely inject faults, execute k6 load matrices, and benchmark the defensive thresholds of microservice architectures before rolling out infrastructure updates to production clusters.</li>
+</ul> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

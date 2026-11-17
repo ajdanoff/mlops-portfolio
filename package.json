@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.5.0",
+    "karate-8086": "github:ajdanoff/karate-8086",
     "tailwindcss": "^3.4.1"
   }
 }

@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="en" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title>Unified vs. Specialist YOLO11n Detectors: Failure-Mode Diagnostics on Held-Out Webcam Benchmarks | Aleksandr Zhdanov</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">MLOps &amp; Infrastructure Engineer</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/#projects" class="hover:text-slate-100 transition-colors">/projects</a> <a href="/mlops-portfolio/notes" class="hover:text-brand-accent transition-colors">/notes</a> <a href="/mlops-portfolio/#services" class="hover:text-slate-100 transition-colors">/services</a> <a href="/mlops-portfolio/about" class="hover:text-brand-accent transition-colors">/about</a> <a href="/mlops-portfolio/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/notes/asl-specialist-models-benchmark/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/notes/asl-specialist-models-benchmark/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12">  <article class="max-w-3xl mx-auto space-y-8"> <!-- Top Breadcrumb --> <div> <a href="/mlops-portfolio/notes" class="text-xs text-brand-accent hover:underline">
+← cd ../notes
+</a> </div> <!-- Article Header --> <header class="space-y-4 border-b border-slate-800 pb-8"> <div class="flex flex-wrap items-center gap-3 text-xs text-slate-400"> <time datetime="2026-11-11">2026-11-11</time> <span>//</span> <span class="text-emerald-400">8 min read</span> </div> <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug"> Unified vs. Specialist YOLO11n Detectors: Failure-Mode Diagnostics on Held-Out Webcam Benchmarks </h1> <p class="text-sm text-slate-400 leading-relaxed"> An empirical failure-mode analysis of unified 36-class versus specialist digit and letter YOLO11n detectors across original and augmented webcam benchmarks, using automated CI benchmark telemetry. </p> <div class="flex flex-wrap gap-2 pt-2"> <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#computer-vision </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#yolo11 </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#benchmarking </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#mlops </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#ci-cd </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#error-analysis </span> </div> </header> <!-- Markdown Content Body --> <div class="space-y-6 text-sm text-slate-300 leading-relaxed 
+			[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-white [&>h2]:pt-6 [&>h2]:border-b [&>h2]:border-slate-900 [&>h2]:pb-2
+			[&>h3]:text-base [&>h3]:font-bold [&>h3]:text-brand-accent [&>h3]:pt-4
+			[&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ul]:text-slate-400
+			[&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>ol]:text-slate-400
+			[&>pre]:bg-slate-950 [&>pre]:border [&>pre]:border-slate-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:text-xs
+			[&_code]:bg-slate-900 [&_code]:text-brand-accent [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs
+			[&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-sky-300
+			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400
+			[&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto
+			[&_th]:border [&_th]:border-slate-800 [&_th]:bg-slate-900/80 [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-slate-200 [&_th]:font-bold [&_th]:whitespace-nowrap
+			[&_td]:border [&_td]:border-slate-800/80 [&_td]:px-3 [&_td]:py-2 [&_td]:whitespace-nowrap"> <p>Decomposing American Sign Language (ASL) detection into dedicated specialist
+models can reduce confusion between visually similar hand shapes, such as <code>0</code>
+versus <code>O</code> or <code>2</code> versus <code>V</code>, in the robotic swarm-control system
+(<code>gesture-swarm-ros2</code>).</p>
+<p>This analysis compares three YOLO11n detectors:</p>
+<ul>
+<li><a href="https://huggingface.co/ajdanoff/asl-unified-webcam-yolo11n-mp">ASL Unified Webcam Gesture Detector</a></li>
+<li><a href="https://huggingface.co/ajdanoff/asl-unified-digits-yolo11n-mp">ASL Unified Digits Gesture Detector</a></li>
+<li><a href="https://huggingface.co/ajdanoff/asl-unified-letters-yolo11n-mp">ASL Unified Letters Gesture Detector</a></li>
+</ul>
+<p>The models were evaluated on two published held-out webcam benchmarks:</p>
+<ul>
+<li><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-original">ASL Webcam Benchmark — Original</a>:
+36 gesture frames plus 1 background frame.</li>
+<li><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-augmented">ASL Webcam Benchmark — Augmented</a>:
+216 gesture frames plus 6 background frames.</li>
+</ul>
+<p>Detection matches require the predicted symbol to equal the ground-truth symbol
+and the intersection-over-union (IoU) between the predicted and ground-truth
+bounding boxes to be at least 0.45.</p>
+<p>Specialist models are evaluated only against ground-truth annotations within
+their own class domains. The digit-only model is evaluated against 10 digit
+annotations in the original benchmark and 60 digit annotations in the augmented
+benchmark. The letter-only model is evaluated against 26 letter annotations in
+the original benchmark and 156 letter annotations in the augmented benchmark.
+Out-of-domain annotations are excluded from the recall denominator and from the
+missed-class report.</p>
+<h2 id="benchmark-telemetry-and-performance-summary">Benchmark telemetry and performance summary</h2>
+<p>Although all models achieved high precision and mAP@0.50 on their respective
+validation splits, held-out webcam evaluation revealed a substantial domain gap.</p>
+<table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>Model</th>
+<th>Evaluation domain</th>
+<th align="right">In-domain ground truth</th>
+<th align="right">True positives</th>
+<th align="right">Recall</th>
+<th align="right">Background false positives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-webcam-yolo11n-mp">Unified Webcam</a></td>
+<td><code>0–9</code>, <code>A–Z</code></td>
+<td align="right">36</td>
+<td align="right">16</td>
+<td align="right">44.44%</td>
+<td align="right">0/1</td>
+</tr>
+<tr>
+<td>Original</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-digits-yolo11n-mp">Digits Specialist</a></td>
+<td><code>0–9</code></td>
+<td align="right">10</td>
+<td align="right">6</td>
+<td align="right">60.00%</td>
+<td align="right">0/1</td>
+</tr>
+<tr>
+<td>Original</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-letters-yolo11n-mp">Letters Specialist</a></td>
+<td><code>A–Z</code></td>
+<td align="right">26</td>
+<td align="right">10</td>
+<td align="right">38.46%</td>
+<td align="right">0/1</td>
+</tr>
+<tr>
+<td>Augmented</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-webcam-yolo11n-mp">Unified Webcam</a></td>
+<td><code>0–9</code>, <code>A–Z</code></td>
+<td align="right">216</td>
+<td align="right">50</td>
+<td align="right">23.15%</td>
+<td align="right">1/6</td>
+</tr>
+<tr>
+<td>Augmented</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-digits-yolo11n-mp">Digits Specialist</a></td>
+<td><code>0–9</code></td>
+<td align="right">60</td>
+<td align="right">25</td>
+<td align="right">41.67%</td>
+<td align="right">0/6</td>
+</tr>
+<tr>
+<td>Augmented</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-letters-yolo11n-mp">Letters Specialist</a></td>
+<td><code>A–Z</code></td>
+<td align="right">156</td>
+<td align="right">43</td>
+<td align="right">27.56%</td>
+<td align="right">1/6</td>
+</tr>
+</tbody>
+</table>
+<p>The digit-only detector achieved the highest recall on both benchmarks. On the
+original benchmark, it detected 6 of 10 digit gestures. On the augmented
+benchmark, it detected 25 of 60 digit instances.</p>
+<p>The lower augmented-benchmark results indicate that the current augmentation
+pipeline is substantially more challenging than the models’ training and
+validation distributions. Because all augmented variants derive from the same
+36 source webcam images, the augmented benchmark measures robustness to
+controlled transformations rather than providing an independent multi-session
+estimate of real-world performance.</p>
+<h2 id="failure-mode-diagnostics">Failure-mode diagnostics</h2>
+<h3 id="background-false-positive-suppression">Background false-positive suppression</h3>
+<p>Training with negative room frames appears to have suppressed background
+hallucinations effectively. The digit-only model produced no false positives on
+either the single original background frame or the six augmented background
+frames.</p>
+<p>The unified and letter-only models each produced one false positive across the
+six augmented background frames. This is a useful signal that background
+training helps, but the small number of background images means it should not
+be treated as a definitive comparison.</p>
+<p>A background false positive is defined as a model detection on an image with no
+ground-truth gesture annotation. Background images are excluded from the recall
+denominator but remain useful for measuring unwanted detections.</p>
+<h3 id="localization-versus-classification">Localization versus classification</h3>
+<p>Several logged misses were not necessarily symbol misclassifications. In the
+benchmark telemetry, some predictions assigned the correct symbol but failed the
+IoU threshold because their bounding boxes were extremely large or poorly
+localized.</p>
+<p>Examples included near-full-frame predictions spanning approximately the entire
+640 × 480 image, as well as boxes shifted by aggressive crop transformations.
+These cases suggest that localization quality, rather than symbol recognition
+alone, contributed to the benchmark failures.</p>
+<p>The conversion pipeline’s fallback boxes are a plausible contributor: when
+MediaPipe does not provide a reliable hand box, a class- and image-size-aware
+centered fallback can produce an oversized or poorly positioned box. This
+hypothesis should be verified by inspecting the affected predictions and their
+associated fallback source before changing the loss function.</p>
+<h3 id="cross-domain-triggering">Cross-domain triggering</h3>
+<p>Running specialist models across the full 36-class benchmark exposed
+cross-domain triggering. For example, the letter-only model produced
+high-confidence <code>F</code> predictions on digit frames, while the digit-only model
+produced predictions on letter frames.</p>
+<p>This does not necessarily mean that the specialist models are inherently
+inferior. It does show that deploying them without an application-level domain
+gate can create false positives outside their intended recognition context.</p>
+<p>For the ROS 2 swarm-control system, specialist detectors should therefore be
+gated by an explicit interaction state: for example, a numeric-entry state may
+activate the digit detector, while a command-letter state may activate the
+letter detector.</p>
+<h3 id="chirality-and-horizontal-flipping">Chirality and horizontal flipping</h3>
+<p>Horizontal flip augmentations appeared to induce severe structural confusions.
+Observed examples included <code>M</code> being interpreted as <code>A</code>, <code>Z</code> as <code>D</code>, and <code>G</code> as
+<code>P</code>; digit <code>2</code> was also confused with <code>3</code>, and <code>4</code> with <code>9</code>.</p>
+<p>These observations support restricting horizontal flips for asymmetric ASL
+gestures, where handedness and spatial orientation can alter the visual
+structure of the sign. Before changing the training configuration, inspect the
+original and flipped variants for each affected class to separate genuine
+chirality sensitivity from crop, scale, or localization artifacts.</p>
+<h2 id="reproducibility">Reproducibility</h2>
+<p>Results were generated by the automated benchmark workflow at evaluator commit
+<a href="https://github.com/ajdanoff/asl-gesture-recognition/commit/93d259cca2121bb23a4f5f9ec6d938df9c0cb907"><code>93d259c</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Evaluator commit</td>
+<td><a href="https://github.com/ajdanoff/asl-gesture-recognition/commit/93d259cca2121bb23a4f5f9ec6d938df9c0cb907"><code>93d259c</code></a></td>
+</tr>
+<tr>
+<td>Confidence threshold</td>
+<td>0.25</td>
+</tr>
+<tr>
+<td>IoU threshold</td>
+<td>0.45</td>
+</tr>
+<tr>
+<td>Matching rule</td>
+<td>Symbol matching</td>
+</tr>
+<tr>
+<td>Ultralytics settings version</td>
+<td>0.0.8</td>
+</tr>
+<tr>
+<td>Benchmark revision</td>
+<td>v1.0.0</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Hugging Face repository</th>
+<th>Model revision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unified Webcam</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-webcam-yolo11n-mp"><code>ajdanoff/asl-unified-webcam-yolo11n-mp</code></a></td>
+<td><code>d3d43f88b6e03cb6f2d8a9eb31a0c92e1e61197b</code></td>
+</tr>
+<tr>
+<td>Digits Specialist</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-digits-yolo11n-mp"><code>ajdanoff/asl-unified-digits-yolo11n-mp</code></a></td>
+<td><code>34ba348ac8064ee1fd270146e85ee3853be48495</code></td>
+</tr>
+<tr>
+<td>Letters Specialist</td>
+<td><a href="https://huggingface.co/ajdanoff/asl-unified-letters-yolo11n-mp"><code>ajdanoff/asl-unified-letters-yolo11n-mp</code></a></td>
+<td><code>e81224f2c93dfc592815b45de914fe3ebc9a3425</code></td>
+</tr>
+</tbody>
+</table>
+<p>The model revision identifiers refer to the Hugging Face repository revisions
+from which the <code>.pt</code> weights were downloaded during the benchmark run. They
+identify the exact published model state used for evaluation.</p>
+<p>Earlier manually reported benchmark values may differ from the values in this
+report if they used a different evaluator version, confidence threshold,
+matching implementation, or model revision. The values above should therefore
+be interpreted as the output of this specific reproducible CI evaluation
+configuration.</p>
+<h2 id="next-engineering-actions">Next engineering actions</h2>
+<ol>
+<li>
+<p><strong>Restrict horizontal flips for chirality-sensitive gestures.</strong> Disable
+horizontal flips during training and benchmark augmentation for asymmetric
+ASL signs, or apply them only where handedness is explicitly preserved.</p>
+</li>
+<li>
+<p><strong>Audit fallback-generated boxes.</strong> Inspect predictions with near-full-frame
+bounding boxes, especially for <code>1</code>, <code>P</code>, and <code>T</code>, and determine whether
+MediaPipe failures, Kalman predictions, or centered fallback boxes produced
+the poor localization.</p>
+</li>
+<li>
+<p><strong>Evaluate stricter localization matching.</strong> Run a sensitivity analysis at
+IoU thresholds such as 0.30, 0.45, and 0.60 to separate missed detections
+from poor box regression.</p>
+</li>
+<li>
+<p><strong>Add ROS 2 mode gating.</strong> Use an explicit numeric or command-letter state
+machine so that specialist detectors receive only images appropriate to their
+class domain.</p>
+</li>
+<li>
+<p><strong>Expand the held-out benchmark.</strong> Collect multiple original frames per class
+from separate sessions, lighting conditions, camera positions, and users.
+This will make per-class recall estimates more stable and allow confidence
+intervals.</p>
+</li>
+</ol>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li>The original benchmark contains only one image per gesture class.</li>
+<li>All augmented variants derive from the same 36 source webcam images.</li>
+<li>The benchmark is therefore not yet a large multi-session held-out test set.</li>
+<li>The reported results should not be used alone to select a final production
+model.</li>
+<li>The augmented benchmark includes transformations that may be more aggressive
+than the models’ training distribution.</li>
+<li>Background-image counts are too small to draw strong conclusions about
+background suppression.</li>
+<li>The benchmark measures single-frame detection performance; it does not yet
+evaluate temporal consistency, gesture transitions, or multi-frame tracking.</li>
+</ul>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-original">ASL Webcam Benchmark — Original</a></li>
+<li><a href="https://huggingface.co/datasets/ajdanoff/asl-webcam-benchmark-augmented">ASL Webcam Benchmark — Augmented</a></li>
+<li><a href="https://github.com/ajdanoff/gesture-recognition-for-mobile-robot-swarm-control/releases/tag/v1.0.0">GitHub release v1.0.0</a></li>
+<li><a href="https://github.com/ajdanoff/asl-gesture-recognition/actions/workflows/benchmark.yml">Benchmark CI workflow</a></li>
+<li><a href="https://github.com/ajdanoff/gesture-recognition-for-mobile-robot-swarm-control">Project repository</a></li>
+</ul> </div> </article>  </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

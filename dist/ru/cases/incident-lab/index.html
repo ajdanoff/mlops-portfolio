@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="ru" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Александр Жданов</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/ru/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">Инженер MLOps и ML-инфраструктуры</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/ru/#projects" class="hover:text-slate-100 transition-colors">/проекты</a> <a href="/mlops-portfolio/ru/notes" class="hover:text-brand-accent transition-colors">/заметки</a> <a href="/mlops-portfolio/ru/#services" class="hover:text-slate-100 transition-colors">/услуги</a> <a href="/mlops-portfolio/ru/about" class="hover:text-brand-accent transition-colors">/обо-мне</a> <a href="/mlops-portfolio/ru/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/incident-lab/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/incident-lab/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="лаборатория-fault-injection-и-observability-в-kubernetes">Лаборатория Fault-Injection и Observability в Kubernetes</h1>
+<h3 id="️-обзор-инфраструктуры">🛠️ Обзор инфраструктуры</h3>
+<p>Симуляционный стенд для воспроизведения узких мест производительности, деградации ресурсов и каскадных отказов в микросервисных архитектурах. Проект используется для отладки алертов Prometheus, дашбордов Grafana и проверки устойчивости сервисов под экстремальной нагрузкой.</p>
+<ul>
+<li><strong>Репозиторий исходного кода:</strong> <a href="https://github.com/ajdanoff/incident-lab">incident-lab</a></li>
+<li><strong>Ключевой стек:</strong> Kubernetes (cgroups) // Prometheus v2 // Grafana // k6 // Python ASGI</li>
+</ul>
+<hr>
+<h2 id="️-воспроизводимые-паттерны-отказов-и-метрики-диагностики">🏗️ Воспроизводимые паттерны отказов и метрики диагностики</h2>
+<p>Лаборатория изолирует характерные сигнатуры сбоев облачной инфраструктуры и фиксирует точные метрики для их локализации:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>               [ Искусственная нагрузка / Burst Traffic ]</span></span>
+<span class="line"><span>                                   │</span></span>
+<span class="line"><span>         ┌─────────────────────────┴─────────────────────────┐</span></span>
+<span class="line"><span>         ▼                                                   ▼</span></span>
+<span class="line"><span>[ Сценарий А: CPU Throttling ]             [ Сценарий Б: Reconnect Storm ]</span></span>
+<span class="line"><span>├── Период CFS cgroups: 100 мс             ├── Таймауты на API Gateway</span></span>
+<span class="line"><span>├── Симптом: скачок p95/p99 latency        ├── Симптом: рост HTTP 5xx и ретраев</span></span>
+<span class="line"><span>└── Метрика: `container_cpu_cfs...`        └── Метрика: `api_inflight_requests`</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="1-иллюзия-свободного-cpu-при-kubernetes-cpu-throttling">1. Иллюзия свободного CPU при Kubernetes CPU Throttling</h3>
+<ul>
+<li><strong>Проблема:</strong> стандартные графики показывают среднюю утилизацию CPU на уровне 50–60%, в то время как <code>p95</code>/<code>p99</code> время ответа сервиса резко деградирует.</li>
+<li><strong>Причина на уровне ядра:</strong> планировщик Linux CFS выделяет квоту CPU микроокнами по <strong>100 мс</strong>. При всплеске препроцессинга данных контейнер вырабатывает всю квоту за первые 20 мс, после чего <code>cgroups</code> принудительно замораживает потоки на оставшиеся 80 мс периода.</li>
+<li><strong>Ключевые метрики для алертинга:</strong> отношение <code>container_cpu_cfs_throttled_periods_total</code> к <code>container_cpu_cfs_periods_total</code> и суммарное время заморозки <code>container_cpu_cfs_throttled_seconds_total</code>.</li>
+</ul>
+<h3 id="2-каскадные-таймауты-и-реконнект-штормы">2. Каскадные таймауты и реконнект-штормы</h3>
+<ul>
+<li><strong>Проблема:</strong> локальная задержка в одном из нижестоящих сервисов валидации приводит к отказу всего API-шлюза.</li>
+<li><strong>Причина:</strong> при превышении таймаутов клиенты и воркеры запускают агрессивные циклы повторных попыток (retry storm), мгновенно исчерпывая пул соединений с БД и брокером сообщений.</li>
+<li><strong>Ключевые метрики:</strong> рост <code>api_inflight_requests</code> и всплеск ошибок <code>http_requests_total{status=~"5.."}</code>.</li>
+</ul>
+<hr>
+<h2 id="-инженерные-выводы-для-продакшена">📈 Инженерные выводы для продакшена</h2>
+<ul>
+<li><strong>Настройка SLO/Alerts:</strong> мониторинг только среднего CPU создаёт слепую зону; критические алерты должны опираться на долю затроттленных CFS-периодов и хвосты распределения задержек (<code>p99</code>).</li>
+<li><strong>Защита от самоиндуцированного DDoS:</strong> обязательное внедрение Circuit Breakers и экспоненциального backoff с джиттером на уровне межсервисных клиентов.</li>
+</ul> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 АЛЕКСАНДР ЖДАНОВ // САНКТ-ПЕТЕРБУРГ</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

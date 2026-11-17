@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="ru" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title>Аркада // 8086 VGA Karate | Александр Жданов</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"><script type="module" src="/mlops-portfolio/_astro/hoisted.CG9NfAAu.js"></script></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/ru/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">Инженер MLOps и ML-инфраструктуры</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/ru/#projects" class="hover:text-slate-100 transition-colors">/проекты</a> <a href="/mlops-portfolio/ru/notes" class="hover:text-brand-accent transition-colors">/заметки</a> <a href="/mlops-portfolio/ru/#services" class="hover:text-slate-100 transition-colors">/услуги</a> <a href="/mlops-portfolio/ru/about" class="hover:text-brand-accent transition-colors">/обо-мне</a> <a href="/mlops-portfolio/ru/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/arcade/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/arcade/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12">  <section class="max-w-3xl mx-auto space-y-6"> <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4"> <div> <div class="text-xs text-brand-accent font-bold tracking-wider">
+// DOS_BOX // MODE_13H_320x200
+</div> <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight"> 8086 VGA KARATE </h1> </div> <div class="flex items-center space-x-3"> <button id="mute-btn" class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors">
+PC Speaker: ON
+</button> <button id="pause-btn" class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors">
+Pause [P]
+</button> <button id="reset-btn" class="text-xs bg-brand-accent hover:bg-sky-400 text-brand-dark font-bold px-3 py-1.5 rounded transition-colors">
+New Match [R]
+</button> </div> </div> <div class="bg-slate-900 p-3 sm:p-5 rounded-xl border-2 border-slate-800 shadow-2xl"> <div class="relative w-full aspect-[16/10] bg-black rounded overflow-hidden border border-slate-700"> <canvas id="vga-canvas" width="320" height="200" class="w-full h-full block" style="image-rendering: pixelated; image-rendering: crisp-edges;"></canvas> <div class="pointer-events-none absolute inset-0 opacity-20" style="background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.6) 0px,
+          rgba(0, 0, 0, 0.6) 1px,
+          transparent 1px,
+          transparent 3px
+        );"></div> </div> <div class="flex items-center justify-between pt-3 px-1 text-[10px] text-slate-500"> <span>IBM VGA 256-COLOR PALETTE // FSM COMBAT ENGINE</span> <span class="flex items-center gap-1.5"> <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+POWER
+</span> </div> </div> <div class="grid grid-cols-3 gap-2 sm:hidden select-none"> <button data-key="ArrowLeft" class="touch-btn touch-none bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+◀ LEFT
+</button> <button data-key="ArrowRight" class="touch-btn touch-none bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+RIGHT ▶
+</button> <button data-key="ShiftLeft" class="touch-btn touch-none bg-slate-900 border border-violet-500/40 active:bg-violet-500/20 py-3 rounded text-xs font-bold text-violet-300">
+DASH
+</button> <button data-key="KeyW" class="touch-btn touch-none bg-slate-900 border border-amber-500/40 active:bg-amber-500/20 py-3 rounded text-xs font-bold text-amber-400">
+BLOCK
+</button> <button data-key="KeyJ" class="touch-btn touch-none bg-slate-900 border border-brand-accent/40 active:bg-brand-accent/20 py-3 rounded text-xs font-bold text-brand-accent">
+PUNCH
+</button> <button data-key="KeyK" class="touch-btn touch-none bg-slate-900 border border-emerald-500/40 active:bg-emerald-500/20 py-3 rounded text-xs font-bold text-emerald-400">
+KICK
+</button> <button data-key="KeyL" class="touch-btn touch-none bg-slate-900 border border-rose-500/40 active:bg-rose-500/20 py-3 rounded text-xs font-bold text-rose-400">
+LOW
+</button> <button data-key="KeyB" class="touch-btn touch-none bg-slate-900 border border-fuchsia-500/40 active:bg-fuchsia-500/20 py-3 rounded text-xs font-bold text-fuchsia-300">
+BACK
+</button> <button data-key="KeyP" class="touch-btn touch-none bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+PAUSE
+</button> <button data-key="KeyR" class="touch-btn touch-none bg-slate-900 border border-slate-700 active:bg-slate-700 py-3 rounded text-xs font-bold text-white">
+RESET
+</button> </div> <div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs"> <div> <span class="text-slate-500 block text-[10px]">MOVE</span> <span class="text-white font-bold">[A / D] or [← / →]</span> </div> <div> <span class="text-slate-500 block text-[10px]">HIGH BLOCK</span> <span class="text-amber-400 font-bold">[W] or [↑]</span> </div> <div> <span class="text-slate-500 block text-[10px]">LOW BLOCK</span> <span class="text-amber-400 font-bold">[S] or [↓]</span> </div> <div> <span class="text-slate-500 block text-[10px]">JAB PUNCH</span> <span class="text-brand-accent font-bold">[J] or [Z]</span> </div> <div> <span class="text-slate-500 block text-[10px]">HIGH KICK</span> <span class="text-emerald-400 font-bold">[K] or [X]</span> </div> <div> <span class="text-slate-500 block text-[10px]">LOW KICK</span> <span class="text-rose-400 font-bold">[L] or [C]</span> </div> <div> <span class="text-slate-500 block text-[10px]">BACK KICK</span> <span class="text-fuchsia-300 font-bold">[B] or [V]</span> </div> <div> <span class="text-slate-500 block text-[10px]">DASH</span> <span class="text-violet-300 font-bold">[SHIFT]</span> </div> </div> </section>   </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 АЛЕКСАНДР ЖДАНОВ // САНКТ-ПЕТЕРБУРГ</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title>Fitting 7B Vision-Language Models into 16GB VRAM: AWQ vs. 4-bit NF4 in vLLM | Aleksandr Zhdanov</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">MLOps &amp; Infrastructure Engineer</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/#projects" class="hover:text-slate-100 transition-colors">/projects</a> <a href="/mlops-portfolio/notes" class="hover:text-brand-accent transition-colors">/notes</a> <a href="/mlops-portfolio/#services" class="hover:text-slate-100 transition-colors">/services</a> <a href="/mlops-portfolio/about" class="hover:text-brand-accent transition-colors">/about</a> <a href="/mlops-portfolio/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/notes/vlm-quantization-awq-nf4/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/notes/vlm-quantization-awq-nf4/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12">  <article class="max-w-3xl mx-auto space-y-8"> <!-- Top Breadcrumb --> <div> <a href="/mlops-portfolio/notes" class="text-xs text-brand-accent hover:underline">
+← cd ../notes
+</a> </div> <!-- Article Header --> <header class="space-y-4 border-b border-slate-800 pb-8"> <div class="flex flex-wrap items-center gap-3 text-xs text-slate-400"> <time datetime="2026-11-11">2026-11-11</time> <span>//</span> <span class="text-emerald-400">6 min read</span> </div> <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug"> Fitting 7B Vision-Language Models into 16GB VRAM: AWQ vs. 4-bit NF4 in vLLM </h1> <p class="text-sm text-slate-400 leading-relaxed"> Practical trade-offs between Activation-Aware Weight Quantization (AWQ) and 4-bit NormalFloat (NF4) when deploying Qwen2.5-VL-7B-Instruct for automated bounding-box annotation under strict VRAM budgets. </p> <div class="flex flex-wrap gap-2 pt-2"> <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#vlm </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#quantization </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#vllm </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#gpu-optimization </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#awq </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#nf4 </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#mlops </span> </div> </header> <!-- Markdown Content Body --> <div class="space-y-6 text-sm text-slate-300 leading-relaxed 
+			[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-white [&>h2]:pt-6 [&>h2]:border-b [&>h2]:border-slate-900 [&>h2]:pb-2
+			[&>h3]:text-base [&>h3]:font-bold [&>h3]:text-brand-accent [&>h3]:pt-4
+			[&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ul]:text-slate-400
+			[&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>ol]:text-slate-400
+			[&>pre]:bg-slate-950 [&>pre]:border [&>pre]:border-slate-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:text-xs
+			[&_code]:bg-slate-900 [&_code]:text-brand-accent [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs
+			[&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-sky-300
+			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400
+			[&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto
+			[&_th]:border [&_th]:border-slate-800 [&_th]:bg-slate-900/80 [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-slate-200 [&_th]:font-bold [&_th]:whitespace-nowrap
+			[&_td]:border [&_td]:border-slate-800/80 [&_td]:px-3 [&_td]:py-2 [&_td]:whitespace-nowrap"> <p>Deploying modern Vision-Language Models (VLMs) like <strong>Qwen2.5-VL-7B-Instruct</strong> for automated dataset annotation (Visual Question Answering to structured bounding-box coordinates) delivers impressive zero-shot generalization. However, running a 7B multimodal transformer in native <code>FP16</code>/<code>BF16</code> precision requires roughly <strong>15–16 GB of VRAM</strong> just for model weights—leaving zero headroom for visual patch embeddings, KV caches, or concurrent batching on a standard <strong>16GB NVIDIA T4</strong> GPU.</p>
+<p>To run this automated annotation pipeline reliably inside strict memory boundaries without triggering Out-Of-Memory (OOM) crashes, I evaluated two primary 4-bit post-training quantization strategies: <strong>AWQ</strong> and <strong>4-bit NF4</strong>.</p>
+<h2 id="1-the-memory-bottleneck-in-multimodal-transformers">1. The Memory Bottleneck in Multimodal Transformers</h2>
+<p>Unlike text-only LLMs, Vision-Language Models introduce a significant memory spike during the visual encoding pass:</p>
+<ul>
+<li><strong>Model Weights:</strong> ~14.5 GB in FP16 (<code>7.6B</code> parameters × 2 bytes).</li>
+<li><strong>Vision Encoder &#x26; Dynamic Resolution:</strong> Qwen2.5-VL processes images dynamically without fixed low-res downsampling, generating hundreds to thousands of visual tokens per image.</li>
+<li><strong>KV Cache &#x26; Activation Buffers:</strong> Long system prompts (strict JSON schema instructions) combined with visual tokens rapidly consume remaining VRAM.</li>
+</ul>
+<p>Dropping weight precision from 16-bit to 4-bit compresses the static model footprint down to <strong>~4.5–5.2 GB</strong>, freeing over 10 GB of VRAM for KV cache and inference throughput.</p>
+<h2 id="2-awq-vs-4-bit-nf4-architectural-trade-offs">2. AWQ vs. 4-bit NF4: Architectural Trade-Offs</h2>
+<p>While both methods compress weights to 4 bits per parameter, their mathematical assumptions and runtime performance in <strong>vLLM</strong> differ substantially.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Dimension</th>
+<th align="left">AWQ (Activation-Aware Weight Quantization)</th>
+<th align="left">4-bit NF4 (NormalFloat4 / BitsAndBytes)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Core Mechanism</strong></td>
+<td align="left">Protects top ~1% salient weights by scaling channels based on activation magnitudes rather than weight magnitudes alone.</td>
+<td align="left">Information-theoretically optimal 4-bit data type assuming normally distributed neural network weights, paired with double quantization.</td>
+</tr>
+<tr>
+<td align="left"><strong>Calibration Requirement</strong></td>
+<td align="left">Requires a calibration dataset pass during quantization to observe activation distributions.</td>
+<td align="left">Zero-shot (data-free) quantization applied directly on-the-fly during model loading.</td>
+</tr>
+<tr>
+<td align="left"><strong>Inference Throughput</strong></td>
+<td align="left"><strong>High.</strong> Uses fused custom CUDA kernels (<code>marlin</code> / <code>awq_gemm</code>) in vLLM with minimal dequantization overhead.</td>
+<td align="left"><strong>Moderate.</strong> Dequantizes weights back to FP16/BF16 during matrix multiplication, increasing memory bandwidth pressure.</td>
+</tr>
+<tr>
+<td align="left"><strong>Spatial / Coordinate Precision</strong></td>
+<td align="left">Preserves fine-grained regression outputs (e.g., <code>[x1, y1, x2, y2]</code> coordinates) with negligible drift.</td>
+<td align="left">Slightly higher variance on strict numerical formatting under complex multi-object prompts.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-production-vllm-configuration-for-16gb-gpus">3. Production vLLM Configuration for 16GB GPUs</h2>
+<p>For the automated safety-gear annotation pipeline (<code>Qwen2.5-VL-7B-Instruct-AWQ</code> orchestrated via <a href="https://github.com">ml-workload-execution-platform</a>), <strong>AWQ</strong> proved superior due to its native fused kernel support in vLLM and higher coordinate stability.</p>
+<p>To guarantee zero OOM failures during sustained batch processing on a 16GB T4, I enforced strict runtime memory boundaries:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#79B8FF"> -m</span><span style="color:#9ECBFF"> vllm.entrypoints.openai.api_server</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --model</span><span style="color:#9ECBFF"> Qwen/Qwen2.5-VL-7B-Instruct-AWQ</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --quantization</span><span style="color:#9ECBFF"> awq</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --dtype</span><span style="color:#9ECBFF"> half</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --max-model-len</span><span style="color:#79B8FF"> 4096</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --gpu-memory-utilization</span><span style="color:#79B8FF"> 0.85</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --limit-mm-per-prompt</span><span style="color:#9ECBFF"> '{"image": 1}'</span></span>
+<span class="line"></span></code></pre>
+<h3 id="why-these-flags-matter">Why These Flags Matter:</h3>
+<ul>
+<li><strong><code>--gpu-memory-utilization 0.85</code>:</strong> Reserves 15% of the 16GB VRAM (~2.4 GB) strictly for PyTorch CUDA context overhead and transient vision-encoder activation spikes, preventing allocator fragmentation.</li>
+<li><strong><code>--max-model-len 4096</code>:</strong> Caps the KV cache pre-allocation block size. Unbounded context lengths (e.g., 32k) cause vLLM to reserve all remaining VRAM for KV blocks at startup, leaving insufficient space for high-resolution image embeddings.</li>
+<li><strong><code>--limit-mm-per-prompt '{"image": 1}'</code>:</strong> Prevents multi-image memory bursts in single-frame VQA annotation workers.</li>
+</ul>
+<h2 id="4-key-engineering-takeaways">4. Key Engineering Takeaways</h2>
+<ul>
+<li><strong>Use NF4 for Rapid Prototyping:</strong> When testing unquantized Hugging Face checkpoints locally or fine-tuning with QLoRA, <code>BitsAndBytes</code> 4-bit NF4 provides instant memory reduction with zero calibration overhead.</li>
+<li><strong>Use AWQ for Production Serving:</strong> When serving VLM pipelines via <strong>vLLM</strong> under strict latency and throughput SLAs, AWQ’s activation-aware scaling and fused INT4/FP16 kernels deliver higher token generation speeds and cleaner structured JSON/coordinate adherence.</li>
+<li><strong>Always Gate Quantized Outputs:</strong> Never assume a 4-bit model preserves spatial precision. Always validate quantized weights against a held-out golden dataset using automated IoU and schema contract checks before promoting the artifact.</li>
+</ul> </div> </article>  </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

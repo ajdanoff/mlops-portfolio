@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="ru" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title> | Александр Жданов</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/ru/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">Инженер MLOps и ML-инфраструктуры</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/ru/#projects" class="hover:text-slate-100 transition-colors">/проекты</a> <a href="/mlops-portfolio/ru/notes" class="hover:text-brand-accent transition-colors">/заметки</a> <a href="/mlops-portfolio/ru/#services" class="hover:text-slate-100 transition-colors">/услуги</a> <a href="/mlops-portfolio/ru/about" class="hover:text-brand-accent transition-colors">/обо-мне</a> <a href="/mlops-portfolio/ru/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/cases/gesture-swarm-ros2/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/cases/gesture-swarm-ros2/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12"> <h1 id="gesture-swarm-ros-2-управление-роем-роботов-по-жестам">Gesture Swarm ROS 2: управление роем роботов по жестам</h1>
+<h3 id="️-обзор-инфраструктуры">🛠️ Обзор инфраструктуры</h3>
+<p>Модульный пакет <strong>ROS 2 на Python</strong>, реализующий контур <em>perception-to-action</em> в реальном времени для управления группой мобильных роботов с помощью жестов. Система использует детектор <strong>YOLO11n</strong> и симулятор <code>turtlesim</code> для проверки кинематики, отделяя компьютерное зрение от фильтрации команд и управления приводами.</p>
+<ul>
+<li><strong>Репозиторий исходного кода:</strong> <a href="https://github.com/ajdanoff/gesture-swarm-ros2">gesture-swarm-ros2</a></li>
+<li><strong>Документация бенчмарков:</strong> <a href="https://github.com/ajdanoff/gesture-swarm-ros2/wiki/Benchmark-datasets">Benchmark Datasets Wiki</a></li>
+<li><strong>Ключевой стек:</strong> ROS 2 (Humble / Lyrical) // Python 3.10+ // Ultralytics YOLO11n // OpenCV // RANSAC // <code>turtlesim</code></li>
+</ul>
+<hr>
+<h2 id="️-модульная-архитектура-нод-и-топиков-ros-2">🏗️ Модульная архитектура нод и топиков ROS 2</h2>
+<p>Пакет разделяет захват видеопотока, интерпретацию последовательностей и управление движением на три независимые ноды ROS 2 и два модуля чистой логики на Python:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>[ Видеопоток с камеры ] ──► gesture_detector_node (YOLO11n)</span></span>
+<span class="line"><span>                                   │</span></span>
+<span class="line"><span>                                   ▼ публикация в /gesture/symbol</span></span>
+<span class="line"><span>                            command_parser_node</span></span>
+<span class="line"><span>                            ├── symbol_filter.py (дедупликация символов)</span></span>
+<span class="line"><span>                            └── command_parser.py (скользящее окно + RANSAC)</span></span>
+<span class="line"><span>                                   │</span></span>
+<span class="line"><span>                                   ▼ публикация JSON в /swarm/command</span></span>
+<span class="line"><span>                            turtlesim_controller_node</span></span>
+<span class="line"><span>                                   │</span></span>
+<span class="line"><span>                                   ▼ публикация Twist в /turtle1/cmd_vel</span></span>
+<span class="line"><span>                            [ turtlesim_node (симулятор кинематики) ]</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="основные-компоненты-пакета">Основные компоненты пакета</h3>
+<ul>
+<li><strong><code>gesture_detector_node</code>:</strong> считывает кадры с камеры (<code>camera_id</code>), выполняет инференс <strong>YOLO11n</strong> и публикует распознанные символы в топик <code>/gesture/symbol</code>.</li>
+<li><strong><code>command_parser_node</code>:</strong> отсеивает дублирующиеся кадры через <code>symbol_filter.py</code> и передаёт поток в <code>command_parser.py</code> для выделения устойчивых команд.</li>
+<li><strong><code>turtlesim_controller_node</code>:</strong> преобразует JSON-команды из <code>/swarm/command</code> в линейные и угловые скорости (<code>/turtle1/cmd_vel</code>).</li>
+</ul>
+<hr>
+<h2 id="-временной-консенсус-ransac-и-грамматика-команд">🔬 Временной консенсус RANSAC и грамматика команд</h2>
+<p>Покадровое распознавание на живом видеопотоке подвержено кратковременным ложным срабатываниям. Чтобы исключить рывки приводов робота, в <code>command_parser.py</code> реализован многоступенчатый конвейер стабилизации:</p>
+<ol>
+<li><strong>Дедупликация подряд идущих символов (<code>symbol_filter.py</code>):</strong> подавляет дубли до попадания в буфер.</li>
+<li><strong>Скользящее окно и консенсус в стиле RANSAC:</strong> анализирует историю последних кадров и выделяет доминирующую команду движения (<code>A</code>, <code>B</code>, <code>F</code>, <code>L</code>, <code>R</code>, <code>U</code>, <code>D</code>), отбрасывая случайные выбросы.</li>
+<li><strong>Аварийная остановка (Emergency Stop):</strong> символ <code>A</code> обрабатывается с наивысшим приоритетом в обход накопления окна для мгновенной остановки агентов.</li>
+<li><strong>Структурный парсинг задач:</strong> поддержка составных директив (<code>T ...</code>) с сериализацией в JSON.</li>
+</ol> </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 АЛЕКСАНДР ЖДАНОВ // САНКТ-ПЕТЕРБУРГ</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>

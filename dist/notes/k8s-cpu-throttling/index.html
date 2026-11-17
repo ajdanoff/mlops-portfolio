@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en" class="bg-brand-dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/mlops-portfolio/favicon.svg"><title>The Kubernetes CPU Throttling Illusion: Why Average CPU Lies and p99 Latency Spikes | Aleksandr Zhdanov</title><link rel="stylesheet" href="/mlops-portfolio/_astro/about.C8SxUf6Y.css">
+<link rel="stylesheet" href="/mlops-portfolio/_astro/asl-specialist-models-benchmark.5ekUpKV5.css"></head> <body class="bg-brand-dark text-slate-200 antialiased font-mono flex flex-col min-h-screen selection:bg-brand-accent/30 selection:text-white"> <!-- Header --> <header class="border-b border-slate-800 bg-brand-dark/80 backdrop-blur sticky top-0 z-50"> <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between"> <div class="flex items-center space-x-3"> <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> <a href="/mlops-portfolio/" class="text-sm font-bold tracking-tight hover:text-brand-accent transition-colors">
+ajdanoff // <span class="text-brand-accent">MLOps &amp; Infrastructure Engineer</span> </a> </div> <div class="flex items-center space-x-6"> <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold tracking-wide text-slate-400"> <a href="/mlops-portfolio/#projects" class="hover:text-slate-100 transition-colors">/projects</a> <a href="/mlops-portfolio/notes" class="hover:text-brand-accent transition-colors">/notes</a> <a href="/mlops-portfolio/#services" class="hover:text-slate-100 transition-colors">/services</a> <a href="/mlops-portfolio/about" class="hover:text-brand-accent transition-colors">/about</a> <a href="/mlops-portfolio/arcade" class="hover:text-emerald-400 transition-colors">/arcade</a> <a href="https://github.com/ajdanoff" target="_blank" class="hover:text-brand-accent transition-colors">GitHub ↗</a> </nav> <!-- Language Switcher EN / RU --> <div class="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 text-[11px] font-bold"> <a href="/mlops-portfolio/notes/k8s-cpu-throttling/" class="px-1.5 py-0.5 rounded transition-colors bg-brand-accent text-brand-dark">
+EN
+</a> <span class="text-slate-700 mx-0.5">|</span> <a href="/mlops-portfolio/ru/notes/k8s-cpu-throttling/" class="px-1.5 py-0.5 rounded transition-colors text-slate-400 hover:text-white">
+RU
+</a> </div> </div> </div> </header> <!-- Main Canvas --> <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12">  <article class="max-w-3xl mx-auto space-y-8"> <!-- Top Breadcrumb --> <div> <a href="/mlops-portfolio/notes" class="text-xs text-brand-accent hover:underline">
+← cd ../notes
+</a> </div> <!-- Article Header --> <header class="space-y-4 border-b border-slate-800 pb-8"> <div class="flex flex-wrap items-center gap-3 text-xs text-slate-400"> <time datetime="2026-11-11">2026-11-11</time> <span>//</span> <span class="text-emerald-400">4 min read</span> </div> <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug"> The Kubernetes CPU Throttling Illusion: Why Average CPU Lies and p99 Latency Spikes </h1> <p class="text-sm text-slate-400 leading-relaxed"> How Linux cgroups CFS quotas freeze ML inference pre-processing containers in 100ms micro-windows while standard Grafana CPU dashboards report healthy utilization. </p> <div class="flex flex-wrap gap-2 pt-2"> <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#kubernetes </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#observability </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#prometheus </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#mlops </span><span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded">
+#performance </span> </div> </header> <!-- Markdown Content Body --> <div class="space-y-6 text-sm text-slate-300 leading-relaxed 
+			[&>h2]:text-lg [&>h2]:font-bold [&>h2]:text-white [&>h2]:pt-6 [&>h2]:border-b [&>h2]:border-slate-900 [&>h2]:pb-2
+			[&>h3]:text-base [&>h3]:font-bold [&>h3]:text-brand-accent [&>h3]:pt-4
+			[&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ul]:text-slate-400
+			[&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>ol]:text-slate-400
+			[&>pre]:bg-slate-950 [&>pre]:border [&>pre]:border-slate-800 [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:text-xs
+			[&_code]:bg-slate-900 [&_code]:text-brand-accent [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs
+			[&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-sky-300
+			[&>blockquote]:border-l-2 [&>blockquote]:border-brand-accent [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-slate-400
+			[&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto
+			[&_th]:border [&_th]:border-slate-800 [&_th]:bg-slate-900/80 [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-slate-200 [&_th]:font-bold [&_th]:whitespace-nowrap
+			[&_td]:border [&_td]:border-slate-800/80 [&_td]:px-3 [&_td]:py-2 [&_td]:whitespace-nowrap"> <p>In high-throughput ML inference services, one of the most deceptive production incidents occurs when <strong>p95 and p99 API latencies spike dramatically</strong>, yet your primary Grafana dashboard shows average container CPU utilization sitting comfortably at 40–50%.</p>
+<p>When replicating burst traffic and cascade failures in my <a href="https://github.com">incident-lab</a> environment, this exact anomaly consistently triggered downstream gateway timeouts and reconnect storms.</p>
+<h2 id="the-root-cause-100ms-cfs-quota-windows">The Root Cause: 100ms CFS Quota Windows</h2>
+<p>Standard Prometheus queries like <code>rate(container_cpu_usage_seconds_total[1m])</code> average CPU usage over a 60-second window. However, the Linux kernel’s <strong>Completely Fair Scheduler (CFS)</strong> enforces Kubernetes CPU limits in <strong>100-millisecond periods</strong> (<code>cpu.cfs_period_us</code>).</p>
+<p>Consider a FastAPI inference wrapper with a strict limit of <code>1000m</code> (1 core, or 100ms of CPU time per 100ms period):</p>
+<ol>
+<li>A burst of concurrent image payloads arrives for pre-processing (resizing, tensor normalization, JSON serialization).</li>
+<li>Python threads consume the entire <strong>100ms</strong> CPU budget in just <strong>20ms</strong> of wall-clock time across multiple host cores.</li>
+<li>The kernel immediately <strong>throttles (freezes)</strong> the container for the remaining <strong>80ms</strong> of that window.</li>
+<li>Over a full minute, average CPU looks low, but individual requests are artificially stalled by 80ms+ per cycle—pushing p99 latency past client timeout thresholds.</li>
+</ol>
+<h2 id="diagnostic-prometheus-queries">Diagnostic Prometheus Queries</h2>
+<p>To detect silent throttling before it triggers a cascade failure across your message brokers, monitor the ratio of throttled CFS periods rather than raw CPU averages:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span># Percentage of 100ms scheduler periods where the container was frozen</span></span>
+<span class="line"><span>sum(rate(container_cpu_cfs_throttled_periods_total{namespace="ml-prod"}[5m])) by (pod)</span></span>
+<span class="line"><span>/</span></span>
+<span class="line"><span>sum(rate(container_cpu_cfs_periods_total{namespace="ml-prod"}[5m])) by (pod) * 100</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>If this ratio crosses <strong>15–20%</strong>, your container is actively starving for compute slices regardless of what the average CPU graph claims.</p>
+<h2 id="remediation-strategies">Remediation Strategies</h2>
+<ul>
+<li><strong>Decouple Heavy Pre-Processing:</strong> Never run synchronous image decoding or tensor transformations inside the ASGI HTTP event loop. Offload payloads to isolated worker queues (RabbitMQ / Celery).</li>
+<li><strong>Tune Resource Limits vs. Requests:</strong> Set <code>requests</code> accurately for Kubernetes bin-packing, and either raise <code>limits</code> to absorb micro-bursts or evaluate disabling strict CFS quotas on latency-critical inference pods where noisy-neighbor isolation permits.</li>
+<li><strong>Gate Releases with Load Profiles:</strong> Enforce p99 latency and CFS throttling thresholds as automated <strong>Quality Gates</strong> using k6 or Locust before promoting canary rollouts.</li>
+</ul> </div> </article>  </main> <!-- Footer --> <footer class="border-t border-slate-900 bg-brand-dark/40 text-[10px] text-slate-500 py-6 text-center tracking-wider"> <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2"> <div>© 2026 ALEKSANDR ZHDANOV // ST. PETERSBURG</div> <div>BUILT WITH ASTRO ENGINE // PERFORMANCE RATIO: 100%</div> </div> </footer> </body></html>
