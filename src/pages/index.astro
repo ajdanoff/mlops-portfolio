@@ -2,190 +2,135 @@
 import MainLayout from '../layouts/MainLayout.astro';
 ---
 
-<MainLayout title="MLOps, Infrastructure & Automated Validation Engineer">
-	
-	<!-- Systems Architect Hero Sector -->
-	<section class="space-y-6 max-w-3xl pb-16 border-b border-slate-800/60">
-		<div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-xs text-slate-400">
-			<span class="text-emerald-400">✓</span> M.Sc. Computer Vision & Robotics @ TU Munich
-		</div>
-		<h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-			Building robust pipelines, microservices, and <span class="text-brand-accent">Quality Gates</span> for heavy production ML workloads.
-		</h1>
-		<p class="text-sm text-slate-400 font-normal leading-relaxed max-w-2xl">
-			Systems Engineer with <span class="text-slate-200 font-bold">11 years of software infrastructure expertise</span> (Kaspersky, Datagile). Specializing in decoupling heavy machine learning architectures, fault-injection validation, zero-copy video processing engines, and high-load resource monitoring.
-		</p>
-		<div class="flex flex-wrap gap-3 pt-2">
-			<a href="https://github.com" target="_blank" class="bg-brand-accent hover:bg-sky-400 text-brand-dark px-4 py-2 rounded text-xs font-bold transition-all shadow-sm">
-				View Source Ecosystem (GitHub)
-			</a>
-			<a href="mailto:alexander.jdanoff@gmail.com" class="bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 px-4 py-2 rounded text-xs font-semibold transition-all">
-				Initialize Contact
-			</a>
-		</div>
-	</section>
+<MainLayout title="Aleksandr Zhdanov | Robotics, Computer Vision & MLOps Engineer">
+  <section class="mb-14">
+    <div class="inline-block px-3 py-1 mb-4 text-xs font-mono text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 rounded-full">
+      M.Sc. Computer Vision & Robotics (TU Munich) · 11+ Years Engineering
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-100 mb-4">
+      Deterministic Systems for Computer Vision, Robotics & Production ML
+    </h1>
+    <p class="text-slate-300 text-lg leading-relaxed max-w-3xl">
+      I design fault-tolerant ML execution pipelines, real-time vision-to-action ROS 2 pipelines, and automated quality gates that keep models reliable under distribution shift, hardware constraints, and production load.
+    </p>
+  </section>
 
-	<!-- High Priority Projects Hub -->
-	<section id="projects" class="pt-16 space-y-8">
-		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
-			<h2 class="text-lg font-bold tracking-tight text-white">/ Core Engineering Repositories</h2>
-			<span class="text-[10px] text-slate-500 uppercase tracking-widest">4 Production-Grade Stacks</span>
-		</div>
+  <section class="mb-14">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-semibold text-slate-100">Selected Architecture & Engineering Case Studies</h2>
+      <span class="text-xs font-mono text-slate-400">5 Featured Systems</span>
+    </div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-			
-			<!-- Project 1: ASL Recognition Pipeline -->
-			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
-				<div class="space-y-4">
-					<!-- Inside src/pages/index.astro under the first project card -->
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-                            <a href={`${import.meta.env.BASE_URL}/cases/asl-recognition`}>ajdanoff / asl-gesture-recognition</a>
-                        </h3>
-                        <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
-                            CI Green
-                        </span>
-                    </div>
-					<p class="text-xs text-slate-400 leading-relaxed">
-						Asynchronous dataset conversion and model benchmarking framework. Features automated **GitHub Actions CI validation gates** evaluating YOLO11n models across multi-variant augmented image matrix spaces.
-					</p>
-				</div>
-				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
-					<span>Python // PyTorch // CI/CD</span>
-					<a href="https://github.com/ajdanoff/asl-gesture-recognition" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
-				</div>
-			</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Case 1: MCP Robot Welding & CUDA -->
+      <a
+        href="/mlops-portfolio/cases/mcp-robot-welding"
+        class="group block p-6 bg-slate-900/70 border border-emerald-500/40 rounded-xl hover:border-emerald-400 transition"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono text-emerald-400">ROBOTICS · MCP SDK v2 · CUDA</span>
+          <span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition">Read case →</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-emerald-300 transition">
+          MCP Robot Welding Simulator & CUDA Spatial Indexing
+        </h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          Deterministic safety gates, 6-DoF inverse kinematics (SE(3)/SO(3)), MELFA-BASIC postprocessor, and 185.2x GPU-accelerated Morton code collision broadphase on NVIDIA T4.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+          <span class="px-2 py-0.5 bg-slate-800 rounded">MCP v2</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">6-DoF IK</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">CUDA / C++</span>
+        </div>
+      </a>
 
-			<!-- Project 2: ML Workload Execution Platform -->
-			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
-				<div class="space-y-4">
-					<!-- Inside src/pages/index.astro under the second project card (Execution Platform) -->
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-                            <a href={`${import.meta.env.BASE_URL}/cases/execution-platform`}>ajdanoff / ml-workload-execution-platform</a>
-                        </h3>
-                        <span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
-                            Architecture
-                        </span>
-                    </div>
-					<p class="text-xs text-slate-400 leading-relaxed">
-						Asynchronous processing platform offloading long-running inference (YOLOv8, Qwen2.5-VL) to isolated workers. Integrates Data/Model/Serving Contract Testing and 4-layer validation strategy.
-					</p>
-				</div>
-				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
-					<span>FastAPI // RabbitMQ // AWQ Quantization</span>
-					<a href="https://github.com/ajdanoff/ml-workload-execution-platform" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
-				</div>
-			</div>
+      <!-- Case 2: ML Workload Execution Platform -->
+      <a
+        href="/mlops-portfolio/cases/execution-platform"
+        class="group block p-6 bg-slate-900/70 border border-slate-800 rounded-xl hover:border-emerald-500/50 transition"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono text-emerald-400">MLOPS · DISTRIBUTED SYSTEMS</span>
+          <span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition">Read case →</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-emerald-300 transition">
+          Fault-Tolerant ML Workload Execution Platform
+        </h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          Asynchronous GPU inference orchestration with FastAPI, RabbitMQ, Redis, PostgreSQL, strict VRAM admission control, and 4-tier release quality gates.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+          <span class="px-2 py-0.5 bg-slate-800 rounded">FastAPI</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">RabbitMQ</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">Docker / CI</span>
+        </div>
+      </a>
 
-			<!-- Project 3: Incident Lab -->
-			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
-				<div class="space-y-4">
-					<!-- Inside src/pages/index.astro under the third project card (Incident Lab) -->
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-                            <a href={`${import.meta.env.BASE_URL}/cases/incident-lab`}>ajdanoff / incident-lab</a>
-                        </h3>
-                        <span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
-                            Observability
-                        </span>
-                    </div>
-					<p class="text-xs text-slate-400 leading-relaxed">
-						Kubernetes replication laboratory tracking microservice performance failure patterns under extreme loads. Formalizes real-time metrics tracking for **Kubernetes CPU Throttling**, cascade timeouts, and reconnect storms.
-					</p>
-				</div>
-				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
-					<span>K8s // Prometheus // Grafana</span>
-					<a href="https://github.com/ajdanoff/incident-lab" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
-				</div>
-			</div>
+      <!-- Case 3: ASL Gesture Recognition & Quality Gates -->
+      <a
+        href="/mlops-portfolio/cases/asl-recognition"
+        class="group block p-6 bg-slate-900/70 border border-slate-800 rounded-xl hover:border-emerald-500/50 transition"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono text-emerald-400">COMPUTER VISION · BENCHMARKING</span>
+          <span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition">Read case →</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-emerald-300 transition">
+          Cross-Domain Gesture Detection & Automated Quality Gates
+        </h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          End-to-end YOLO11n training and evaluation pipeline with held-out Hugging Face benchmarks, synthetic domain-shift stress matrices, and CI regression gates.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+          <span class="px-2 py-0.5 bg-slate-800 rounded">YOLO11n</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">PyTorch</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">Pytest CI</span>
+        </div>
+      </a>
 
-			<!-- Project 4: Gesture Swarm ROS 2 -->
-			<div class="bg-slate-900/40 border border-slate-800/80 rounded-lg p-6 hover:border-brand-accent/50 transition-all flex flex-col justify-between group">
-				<div class="space-y-4">
-					<div class="flex justify-between items-start">
-						<h3 class="text-sm font-bold text-white group-hover:text-brand-accent transition-colors">
-							<a href={`${import.meta.env.BASE_URL}/cases/gesture-swarm-ros2`}>ajdanoff / gesture-swarm-ros2</a>
-						</h3>
-						<span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded">
-							Robotics
-						</span>
-					</div>
-					<p class="text-xs text-slate-400 leading-relaxed">
-						Modular **ROS 2 Python** vision-to-action package for gesture-controlled robot swarms. Decouples YOLO11n inference from rolling-window **RANSAC temporal consensus**, emergency stop overrides, and JSON command routing to `/cmd_vel`.
-					</p>
-				</div>
-				<div class="flex justify-between items-center pt-6 text-[10px] text-slate-500 border-t border-slate-800/50 mt-4">
-					<span>Python // ROS 2 // YOLO11n // RANSAC</span>
-					<a href="https://github.com/ajdanoff/gesture-swarm-ros2" target="_blank" class="text-brand-accent hover:underline">Code ↗</a>
-				</div>
-			</div>
+      <!-- Case 4: Gesture Swarm ROS 2 -->
+      <a
+        href="/mlops-portfolio/cases/gesture-swarm-ros2"
+        class="group block p-6 bg-slate-900/70 border border-slate-800 rounded-xl hover:border-emerald-500/50 transition"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono text-emerald-400">ROS 2 · MULTI-AGENT CONTROL</span>
+          <span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition">Read case →</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-emerald-300 transition">
+          Vision-Driven Multi-Agent Swarm Control in ROS 2
+        </h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          Decoupled perception and cmd_vel actuation nodes with RANSAC-style temporal consensus filtering, safety watchdogs, and collision-avoidance coordination.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+          <span class="px-2 py-0.5 bg-slate-800 rounded">ROS 2</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">OpenCV</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">RANSAC</span>
+        </div>
+      </a>
 
-		</div>
-	</section>
-    	<!-- Professional Consulting & Engineering Services Matrix -->
-	<section id="services" class="pt-24 pb-12 space-y-8">
-		<div class="flex items-center justify-between border-b border-slate-900 pb-4">
-			<h2 class="text-lg font-bold tracking-tight text-white">/ Engineering & Consulting Services</h2>
-			<span class="text-[10px] text-brand-accent uppercase tracking-widest font-bold">Available for Contracts</span>
-		</div>
-
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			
-			<!-- Service 1: MLOps Decoupling -->
-			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
-				<div class="text-brand-accent text-xs font-bold tracking-wider">// 01 // ARCHITECTURE</div>
-				<h3 class="text-sm font-bold text-white tracking-tight">MLOps Infrastructure & Decoupling</h3>
-				<p class="text-xs text-slate-400 leading-relaxed">
-					Isolating heavy synchronous deep learning model inference (PyTorch, vLLM, TensorRT) away from Python ASGI frameworks (FastAPI) via highly scalable message brokers (RabbitMQ, Redis Streams) to prevent Event Loop blocks and system degradation.
-				</p>
-				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
-					<li>• Asynchronous Task Architecture</li>
-					<li>• Distributed Celery Worker Clusters</li>
-					<li>• Dynamic Input Validation Gates</li>
-				</ul>
-			</div>
-
-			<!-- Service 2: Automated Quality Gates -->
-			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
-				<div class="text-emerald-400 text-xs font-bold tracking-wider">// 02 // QUALITY ENG</div>
-				<h3 class="text-sm font-bold text-white tracking-tight">Automated Verification & Gates</h3>
-				<p class="text-xs text-slate-400 leading-relaxed">
-					Building custom automated validation frameworks embedded directly inside CI/CD pipelines (GitHub Actions, GitLab CI). Enforcing robust test suites tracking feature schema validation, data drift anomalies (KS-Test), and model footprint evaluations.
-				</p>
-				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
-					<li>• Cross-Model Contract Testing</li>
-					<li>• Automated Dataset Augmentations</li>
-					<li>• Out-of-Distribution Regression Gates</li>
-				</ul>
-			</div>
-
-			<!-- Service 3: High-Density Monitoring -->
-			<div class="border border-slate-800 bg-slate-900/20 rounded-lg p-5 space-y-4">
-				<div class="text-amber-400 text-xs font-bold tracking-wider">// 03 // RELIABILITY</div>
-				<h3 class="text-sm font-bold text-white tracking-tight">High-Load Observability & Triage</h3>
-				<p class="text-xs text-slate-400 leading-relaxed">
-					Instrumenting full-stack monitoring layers (Prometheus, Grafana, Jaeger) designed to track latency percentiles (p95/p99) and infrastructure failures. Replicating stress profiles to eliminate Kubernetes CPU Throttling and cascading network timeouts.
-				</p>
-				<ul class="text-[10px] text-slate-500 space-y-1 pt-2 border-t border-slate-800/40">
-					<li>• Kernel CFS Throttling Diagnostics</li>
-					<li>• High-Density Prometheus Metric Exporters</li>
-					<li>• Load Testing Automation (k6/Locust)</li>
-				</ul>
-			</div>
-
-		</div>
-
-		<!-- Unified Value Proposition Banner -->
-		<div class="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-dark border border-slate-800 rounded-lg p-6 flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-			<div class="space-y-1">
-				<h4 class="text-xs font-bold text-white">Need an infrastructure engineer to stabilize your production ML lifecycle?</h4>
-				<p class="text-[11px] text-slate-400">Available for targeted infrastructure audits, contract platform engineering, and custom automation framework designs.</p>
-			</div>
-			<a href="mailto:alexander.jdanoff@gmail.com" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-brand-accent border border-slate-700 px-4 py-2 rounded shadow-sm whitespace-nowrap transition-colors">
-				Request Technical Audit
-			</a>
-		</div>
-	</section>
-
+      <!-- Case 5: Incident Lab -->
+      <a
+        href="/mlops-portfolio/cases/incident-lab"
+        class="group block p-6 bg-slate-900/70 border border-slate-800 rounded-xl hover:border-emerald-500/50 transition md:col-span-2"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono text-emerald-400">RELIABILITY · OBSERVABILITY · KUBERNETES</span>
+          <span class="text-xs font-mono text-slate-400 group-hover:text-emerald-300 transition">Read case →</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-100 mb-2 group-hover:text-emerald-300 transition">
+          Production Incident Lab & Latency Degradation Diagnostics
+        </h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          Reproducible failure injection lab diagnosing Linux CFS CPU throttling, connection pool exhaustion, and p99 tail-latency spikes using Prometheus, Grafana, and Locust.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs font-mono text-slate-400">
+          <span class="px-2 py-0.5 bg-slate-800 rounded">Kubernetes</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">Prometheus</span>
+          <span class="px-2 py-0.5 bg-slate-800 rounded">Locust</span>
+        </div>
+      </a>
+    </div>
+  </section>
 </MainLayout>
